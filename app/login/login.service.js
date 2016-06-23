@@ -7,13 +7,19 @@ angular
 function LoginService() {
 	var service = {
 		username : '',
+		usersArray : [],
 
+		pushUsername : pushUsername,
 		submitUsername : submitUsername,
 		validateUsername : validateUsername		
 	}
 
 	return service;
 	////////////////////
+
+	function pushUsername(username) {
+		this.usersArray.push(username);
+	}
 
 	function submitUsername(username) {
 		return false;

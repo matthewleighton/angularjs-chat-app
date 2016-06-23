@@ -10,27 +10,13 @@ describe('login module', function() {
 		beforeEach(inject(function(_$controller_) {
 			$controller = _$controller_;
 		}));
-
-
-		/*
-		beforeEach(inject(function($componentController) {
-			ctrl = $componentController(login)
-		}));
-		*/
 		
 		// Checking that the test system is up and running.
 		it('should work', function() {
 			console.log($controller);
 			expect(true).toEqual(true);
 		});
-/*
-		it('should return false if a username is fewer than 3 characters', function() {
-			var username = 'ab';
-			var controller = $controller('LoginController', {});
-			//controller.username = username;
-			expect(controller.submitUsername(username)).toEqual(false);
-		});
-*/
+
 	});
 
 	describe('login service', function() {
@@ -40,7 +26,17 @@ describe('login module', function() {
 			loginService = _LoginService_;
 		}));
 
-		describe('validateUsername', function() {
+		describe('pushUsername()', function() {
+			it('should add a username to the usernameArray', function() {
+				var username = 'name';
+				var numberOfUsers = loginService.usersArray.length;
+
+				loginService.pushUsername(username);
+				expect(loginService.usersArray.length).toEqual(numberOfUsers + 1);
+			});
+		});
+
+		describe('validateUsername()', function() {
 			it('should return false for name shorter than 3 characters', function() {
 				var username = 'ab';
 				expect(loginService.validateUsername(username)).toEqual(false);
@@ -61,6 +57,12 @@ describe('login module', function() {
 				expect(loginService.validateUsername(username)).toEqual(true);
 			});
 		});
+
+		describe('submitUsername()', function() {
+
+		});
+
+
 
 	});
 
