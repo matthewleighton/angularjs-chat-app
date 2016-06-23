@@ -9,6 +9,7 @@ function LoginService() {
 		username : '',
 		usersArray : [],
 
+		attemptLogin : attemptLogin,
 		pushUsername : pushUsername,
 		submitUsername : submitUsername,
 		validateUsername : validateUsername		
@@ -16,6 +17,10 @@ function LoginService() {
 
 	return service;
 	////////////////////
+
+	function attemptLogin(username) {
+		console.log("attempting login with username: " + username);
+	}
 
 	function pushUsername(username) {
 		this.usersArray.push(username);
@@ -33,6 +38,10 @@ function LoginService() {
 
 	function validateUsername(username) {
 		if (username.length < 3 || username.length > 12) {
+			return false;
+		}
+
+		if (this.usersArray.indexOf(username) > -1) {
 			return false;
 		}
 

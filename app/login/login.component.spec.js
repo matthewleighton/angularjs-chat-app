@@ -26,6 +26,10 @@ describe('login module', function() {
 			loginService = _LoginService_;
 		}));
 
+		describe('attemptLogin()', function() {
+			//it('should ')
+		})
+
 		describe('pushUsername()', function() {
 			it('should add a username to the usernameArray', function() {
 				var username = 'name';
@@ -55,6 +59,13 @@ describe('login module', function() {
 			it('should return true for a name containing 12 characters', function() {
 				var username = 'abcdefghijkl';
 				expect(loginService.validateUsername(username)).toEqual(true);
+			});
+
+			it('should return false if the username already exists in the usernameArray', function() {
+				var username = 'matthew';
+				loginService.usersArray = [username];
+
+				expect(loginService.validateUsername(username)).toEqual(false);
 			});
 		});
 
