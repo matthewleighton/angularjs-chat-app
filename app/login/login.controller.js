@@ -4,18 +4,30 @@ angular
 	.module('login')
 	.controller('LoginController', LoginController);
 
-// $inject ensures that LoginService will still be available when the code is minified.
-LoginController.$inject = ['LoginService'];
+LoginController.$inject = ['LoginService', 'chatSocket', '$location', '$scope'];
 
-function LoginController(LoginService) {
+function LoginController(LoginService, chatSocket, $location, $scope) {
 	var vm = this;
 
 	vm.attemptLogin = attemptLogin;
-	vm.username = LoginService.username;
+	vm.error = '';
+	//vm.username = '';
+
 
 	/////////////////////
 
-	function attemptLogin(username = vm.username) {
-		LoginService.attemptLogin(username);
+	function attemptLogin(username = '') {
+		var promise = LoginService.attemptLogin(username);
+
+		promise.then(function(loginErrors) {
+			var error = loginErrors.errors;
+			$scope.$apply(function() {
+				if (error) {
+					vm.error = error;
+				} else {
+					$location.path('messaging');
+				}
+			});
+		});
 	}
 }

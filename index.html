@@ -5,15 +5,27 @@
 	<link rel="stylesheet" type="text/css" href="assets/css/concat.min.css">
 	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 
+	<script src="http://localhost:3001/socket.io/socket.io.js"></script>
+	<!--<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>-->
+
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-route/angular-route.js"></script>
+	<script src="bower_components/angular-socket-io/socket.js"></script>
 	<script src="app/app.module.js"></script>
 	<script src="app/app.config.js"></script>
+
+	<script src="app/core/core.module.js"></script>
+	<script src="app/core/chatSocket.service.js"></script>
 	
 	<script src="app/login/login.module.js"></script>
 	<script src="app/login/login.service.js"></script>
 	<script src="app/login/login.controller.js"></script>
 	<script src="app/login/login.component.js"></script>
+
+	<script src="app/messaging/messaging.module.js"></script>
+	<!--<script src="app/messaging/messaging.service.js"></script>-->
+	<script src="app/messaging/messaging.controller.js"></script>
+	<script src="app/messaging/messaging.component.js"></script>
 
 </head>
 <body>

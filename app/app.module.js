@@ -1,6 +1,9 @@
 'use strict'
 
 angular.module('chatApp', [
+	'core',
 	'ngRoute',
-	'login'
+	'login',
+	'messaging',
+	'btford.socket-io'
 ]);

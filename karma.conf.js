@@ -15,14 +15,35 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+        //'https://cdn.socket.io/socket.io-1.4.5.js',
+        'http://localhost:9876/socket.io/socket.io.js',
+        //'socket.io/socket.io.js',
         'bower_components/angular/angular.js',
         'bower_components/angular-mocks/angular-mocks.js',
 
+
+        
+
+        'bower_components/angular-socket-io/socket.js',
+        'bower_components/angular-route/angular-route.js',
+        
         'app/app.module.js',
+
+        'app/core/core.module.js',
+        'app/core/chatSocket.service.js',
+
+
+        
+
+        
+
+
         'app/login/login.module.js',
         'app/login/login.controller.js',
         'app/login/login.service.js',
         'app/login/login.component.js',
+
+        'app/messaging/messaging.module.js',
 
 
 
@@ -46,6 +67,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+        //'app/**/*.spec.js': ['browserify']
     },
 
 

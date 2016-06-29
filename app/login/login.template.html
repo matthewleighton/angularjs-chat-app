@@ -2,5 +2,7 @@
 	<h1 id="main-title">Chat App</h1>
 	<h2>Enter a username:</h2>
 	<input ng-model="$ctrl.username" id="username-input" autofocus/><br/>
-	<button ng-click="$ctrl.attemptLogin()" id="login-button">Login</button>
+	<button ng-click="$ctrl.attemptLogin($ctrl.username)" id="login-button">Login</button>
+	<br/><br/>
+	<h1>{{$ctrl.error}}</h1>
 </div>

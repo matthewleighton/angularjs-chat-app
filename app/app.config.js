@@ -10,5 +10,8 @@ angular.
 				when('/login', {
 					template: '<login></login>'
 				}).
+				when('/messaging', {
+					template: '<messaging></messaging>'
+				}).
 				otherwise('/login');
 	}]);
