@@ -1,21 +1,23 @@
-<div id="users-list">
-	<h1>Active Users</h1>
-	<div class="active-user" ng-repeat="user in $ctrl.activeUsers">
-		{{user}}
-	</div>
-</div>
-
-<div id="messaging-area">
-	<div id="received-messages">
-		<div ng-repeat="msg in $ctrl.messageStorage" id="message-container">
-			<span class="sent-by">{{msg.user}} </span><span class="timestamp">{{msg.timestamp}}</span><br/>
-			{{msg.body}}<br/><br/><br/>
+<div class="container">
+	<div id="users-list">
+		<h1>Active Users</h1>
+		<div class="active-user" ng-repeat="user in $ctrl.activeUsers">
+			{{user}}
 		</div>
 	</div>
-	<div id="message-entry">
-		<form id="message-form">
-			<textarea ng-model="msg" placeholder="Write a message..." id="message-entry"></textarea><br/>
-			<button ng-click="$ctrl.sendMessage(msg)" id="send-btn">Send</button>
-		</form>
+
+	<div id="messaging-area">
+		<div id="received-messages">
+			<div ng-repeat="msg in $ctrl.messageStorage" id="message-container">
+				<span class="sent-by">{{msg.user}} </span><span class="timestamp">{{msg.timestamp}}</span><br/>
+				{{msg.body}}<br/><br/><br/>
+			</div>
+		</div>
+		<div id="message-entry">
+			<form id="message-form">
+				<textarea ng-model="msg" placeholder="Write a message..." id="message-entry"></textarea><br/>
+				<button ng-click="$ctrl.sendMessage(msg)" id="send-btn">Send</button>
+			</form>
+		</div>
 	</div>
 </div>
