@@ -11,9 +11,7 @@ function LoginController(LoginService, chatSocket, $location, $scope) {
 
 	vm.attemptLogin = attemptLogin;
 	vm.error = '';
-	//vm.username = '';
-
-
+	
 	/////////////////////
 
 	function attemptLogin(username = '') {

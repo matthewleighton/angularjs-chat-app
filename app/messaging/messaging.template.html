@@ -1,12 +1,24 @@
 <div id="users-list">
 	This is the users list.
+	<div ng-repeat="user in $ctrl.activeUsers">
+		{{user}}
+	</div>
 </div>
 
 <div id="messaging-area">
-	<div id="reveived-messages">
-		This is where reveived messages are displayed.
+	<div id="received-messages">
+		This is where reveived messages are displayed.<br/><br/>
+		<div ng-repeat="msg in $ctrl.messageStorage">
+			{{msg.user}} - {{msg.timestamp}}<br/>
+			{{msg.body}}<br/><br/><br/>
+		</div>
 	</div>
 	<div id="message-entry">
 		This is where you enter your messages.
+
+		<form>
+			<input type="text" ng-model="msg">
+			<button ng-click="$ctrl.sendMessage(msg)">Send message</button>
+		</form>
 	</div>
 </div>

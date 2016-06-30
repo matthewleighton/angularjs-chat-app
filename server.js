@@ -4,6 +4,7 @@ var server = http.createServer(app);
 
 var usersArray = ['Steve', 'Tom'];
 
+
 app.use(express.static(__dirname));
 
 server.listen(3001);
@@ -24,12 +25,28 @@ io.on('connect', function(socket) {
 		socket.username = username;
 		usersArray.push(username);
 		console.log(usersArray);
+
+		io.sockets.emit('send user list', usersArray);
 	});
 
 	socket.on('login check', function(callback) {
 		console.log("Received request to check login status");
+		console.log(socket.username);
 		callback(socket.username);
-	})
+	});
+
+	socket.on('request activeUsers', function(callback) {
+		callback(usersArray);
+	});
+
+	socket.on('sending message', function(msg) {
+		console.log(msg);
+		io.sockets.emit('new message', {
+			'user' : socket.username,
+			'body' : msg,
+			'timestamp' : Date.now()
+		});
+	});
 
 	socket.on('disconnect', function() {
 		if (socket.username){
@@ -40,6 +57,9 @@ io.on('connect', function(socket) {
 			console.log(usersArray);
 		}
 
+		io.sockets.emit('send user list', usersArray);
 		console.log('User disconnected.');
 	});
+
+	
 });
