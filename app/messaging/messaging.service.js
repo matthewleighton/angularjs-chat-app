@@ -9,17 +9,12 @@ MessagingService.$inject = ['chatSocket'];
 function MessagingService(chatSocket) {
 	var service = {
 		checkLoginStatus : checkLoginStatus,
+		focusTextarea : focusTextarea,
 		listenForUsers : listenForUsers
 	}
 
 	return service;
 	////////////////////
-
-	// Currently being done in the controller as I'm unable to access the scope from here.
-	// TODO - Potentially refactor this to be done here rather than in the controller.
-	function listenForUsers() {
-		
-	}
 
 	function checkLoginStatus() {
 		return new Promise(function(resolve, reject) {
@@ -27,5 +22,15 @@ function MessagingService(chatSocket) {
 				resolve(response);
 			});
 		});
+	}
+
+	function focusTextarea() {
+		document.getElementById('message-textarea').focus();
+	}
+
+	// Currently being done in the controller as I'm unable to access the scope from here.
+	// TODO - Potentially refactor this to be done here rather than in the controller.
+	function listenForUsers() {
+		
 	}
 }

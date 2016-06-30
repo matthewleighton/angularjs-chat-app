@@ -10,14 +10,16 @@
 		<div id="received-messages">
 			<div ng-repeat="msg in $ctrl.messageStorage" id="message-container">
 				<span class="sent-by">{{msg.user}} </span><span class="timestamp">{{msg.timestamp}}</span><br/>
-				{{msg.body}}<br/><br/><br/>
+				{{msg.body}}<br/><br/>
 			</div>
 		</div>
 		<div id="message-entry">
 			<form id="message-form">
-				<textarea ng-model="msg" placeholder="Write a message..." id="message-entry"></textarea><br/>
-				<button ng-click="$ctrl.sendMessage(msg)" id="send-btn">Send</button>
+				<textarea ng-model="msg" placeholder="Write a message..." id="message-textarea"></textarea>
+				<!--<button ng-click="$ctrl.sendMessage(msg)" id="send-btn">Send</button>-->
+				<img src="assets/img/paper-plane.png" id="send-btn" ng-click="$ctrl.sendMessage(msg)" />
 			</form>
+			
 		</div>
 	</div>
 </div>

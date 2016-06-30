@@ -12,13 +12,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 	vm.messageStorage = [];
 
 	vm.checkLoginStatus = checkLoginStatus;
+	vm.focusTextarea = focusTextarea;
+	vm.listenForEnter = listenForEnter;
 	vm.sendMessage = sendMessage;
 	
 	/////////////////////
 	
 	// Run this when the page loads to ensure users are logged in.
 	checkLoginStatus();
-	
+	focusTextarea();
+	listenForEnter();
 	
 	chatSocket.emit('request activeUsers', function(activeUsers) {
 		vm.activeUsers = activeUsers;
@@ -58,6 +61,18 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 		});
 	}
 
+	function focusTextarea() {
+		MessagingService.focusTextarea();
+	}
+
+	function listenForEnter() {
+		document.onkeypress = function(e) {
+			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea') {
+				sendMessage($scope.msg);
+			}
+		}
+	}
+
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
 	}
@@ -70,7 +85,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 			scrollDown();
 
 			$scope.msg = '';
-				
+			focusTextarea();				
 		}
 	}
 

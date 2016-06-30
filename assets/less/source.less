@@ -98,6 +98,7 @@ login {
 	h1 {
 		font-size: 20px;
 		text-align: center;
+		margin-bottom: 10px;
 	}
 }
 
@@ -116,19 +117,22 @@ login {
 	/*background-color: white;*/
 	box-sizing: border-box;
 	font-size: 13px;
-	padding: 30px;
+	
 	height: 80%;
-	width: 100%;
+	padding: 30px;
+	margin-bottom: 10px;
 	overflow: auto;
+	width: 100%;
 	word-wrap: break-word;
 }
 
 #message-container {
+	line-height: 1.25;
 	margin: 0 auto;
-	width: 509px;
+	width: 541px;
 }
 
-@media (max-width: 920px) {
+@media (max-width: 965px) {
 	#message-container {
 		width: 400px;
 	}
@@ -152,15 +156,20 @@ login {
 }
 
 #message-entry {
+	margin: 0 auto;
+}
+
+#message-textarea {
 	padding: 5px;
 	resize: none;
-	width: 100%;
+	width: 90%;
 	box-sizing: border-box;
 }
 
 #message-form {
 	margin: 0 auto;
 	width: 509px;
+	white-space: nowrap;
 }
 
 @media (max-width: 740px) {
@@ -176,15 +185,10 @@ login {
 }
 
 #send-btn {
-	background-color: #224792;
-	color: white;
-	font-weight: bold;
-	padding: 10px;
-	border: none;
-	vertical-align: top;
+	vertical-align: 5px;
+	width: 32px;
 }
 
 #send-btn:hover {
-	background-color: #123792;
 	cursor: pointer;
 }
