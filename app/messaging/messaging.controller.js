@@ -43,8 +43,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 		if (scrollAtBottom) {
 			scrollDown();
 		}
-
-
 	});
 
 
@@ -67,7 +65,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 
 	function listenForEnter() {
 		document.onkeypress = function(e) {
-			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea') {
+			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
 				sendMessage($scope.msg);
 			}
 		}
@@ -75,6 +73,15 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
+	}
+
+	// This is triggered by a callback because it needs to happen AFTER the new message has been received from the server.
+	// A later alternative might be to use a promise to only trigger this once the new message has been received. (TODO)
+	function scrollDown() {
+		chatSocket.emit('scroll down', function(callback) {
+			var objDiv = document.getElementById("received-messages");
+			objDiv.scrollTop = objDiv.scrollHeight;
+		});
 	}
 
 	function sendMessage(msg) {
@@ -88,15 +95,4 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 			focusTextarea();				
 		}
 	}
-
-	// This is triggered by a callback because it needs to happen AFTER the new message has been received from the server.
-	// A later alternative might be to use a promise to only trigger this once the new message has been received. (TODO)
-	function scrollDown() {
-		chatSocket.emit('scroll down', function(callback) {
-			var objDiv = document.getElementById("received-messages");
-			objDiv.scrollTop = objDiv.scrollHeight;
-		});
-	}
-
-
 }
