@@ -11,6 +11,7 @@ function LoginService(chatSocket) {
 		username : '',
 
 		attemptLogin : attemptLogin,
+		formatUsername : formatUsername,
 		pushUsername : pushUsername,
 		validateUsernameLength : validateUsernameLength,
 		validateUsernameUniqueness : validateUsernameUniqueness
@@ -20,6 +21,8 @@ function LoginService(chatSocket) {
 	////////////////////
 
 	function attemptLogin(username) {	
+		username = formatUsername(username);
+
 		var promise = new Promise(function(resolve, reject) {
 			chatSocket.emit('requestUsersArray', function(response) {
 				resolve(response);
@@ -35,6 +38,11 @@ function LoginService(chatSocket) {
 
 			return loginErrors;
 		});
+	}
+
+	function formatUsername(username) {
+		username = username.toLowerCase();
+		return username.charAt(0).toUpperCase() + username.slice(1);
 	}
 
 	function pushUsername(username) {

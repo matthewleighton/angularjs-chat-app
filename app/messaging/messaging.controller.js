@@ -74,6 +74,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 		}
 	}
 
+	// This is triggered by a callback because it needs to happen AFTER the new message has been received from the server.
+	// A later alternative might be to use a promise to only trigger this once the new message has been received. (TODO)
 	function scrollDown() {
 		chatSocket.emit('scroll down', function(callback) {
 			var objDiv = document.getElementById("received-messages");

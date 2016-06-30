@@ -1,8 +1,10 @@
 <div id="login-screen">
 	<h1 id="main-title">Chat App</h1>
 	<h2>Enter a username:</h2>
-	<input ng-model="$ctrl.username" id="username-input" autofocus/><br/>
-	<button ng-click="$ctrl.attemptLogin($ctrl.username)" id="login-button">Login</button>
+	<form>
+		<input ng-model="$ctrl.username" id="username-input" autocomplete="off" autofocus/><br/>
+		<button ng-click="$ctrl.attemptLogin($ctrl.username)" id="login-button">Login</button>
+	</form>
 	<br/><br/>
 	<h1>{{$ctrl.error}}</h1>
 </div>

@@ -2,9 +2,7 @@ var express = require('express'), http = require('http');
 var app = express();
 var server = http.createServer(app);
 
-//var usersArray = ['Steve', 'Tom'];
 var usersArray = [];
-
 
 app.use(express.static(__dirname));
 
@@ -41,10 +39,12 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('sending message', function(msg) {
+		var date = createTimestamp();
+
 		io.sockets.emit('new message', {
 			'user' : socket.username,
 			'body' : msg,
-			'timestamp' : Date.now()
+			'timestamp' : date
 		});
 	});
 
@@ -64,6 +64,20 @@ io.on('connect', function(socket) {
 		io.sockets.emit('send user list', usersArray);
 		console.log('User disconnected.');
 	});
+
+	function createTimestamp() {
+		var today = new Date();
+		var day = today.getDate();
+		var month = today.getMonth()+1;
+		var minute = today.getMinutes();
+		
+		if (minute.length == 1) {
+			minute = '0' + minute;
+		}
+		var hour = today.getHours();
+
+		return day + "/" + month + ", " + hour + ":" + minute;
+	}
 
 	
 });

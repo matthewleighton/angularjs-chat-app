@@ -36,12 +36,12 @@ module.exports = function(grunt) {
 			less: {
 				files: ['assets/less/*.less'],
 				tasks: ['less', 'concat', 'cssmin']
-			},
+			}/*,
 			cssmin: {
 				files: ['assets/css/*.css'],
 				tasks: ['concat', 'cssmin']
 
-			}
+			}*/
 		}
 	});
 
