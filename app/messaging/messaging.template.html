@@ -1,6 +1,6 @@
 <div id="users-list">
-	This is the users list.
-	<div ng-repeat="user in $ctrl.activeUsers">
+	<h1>Active Users</h1>
+	<div class="active-user" ng-repeat="user in $ctrl.activeUsers">
 		{{user}}
 	</div>
 </div>
@@ -17,7 +17,7 @@
 		This is where you enter your messages.
 
 		<form>
-			<input type="text" ng-model="msg">
+			<input type="text" ng-model="msg" placeholder="Write a message...">
 			<button ng-click="$ctrl.sendMessage(msg)">Send message</button>
 		</form>
 	</div>

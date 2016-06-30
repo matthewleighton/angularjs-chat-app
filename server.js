@@ -2,7 +2,8 @@ var express = require('express'), http = require('http');
 var app = express();
 var server = http.createServer(app);
 
-var usersArray = ['Steve', 'Tom'];
+//var usersArray = ['Steve', 'Tom'];
+var usersArray = [];
 
 
 app.use(express.static(__dirname));
@@ -40,12 +41,15 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('sending message', function(msg) {
-		console.log(msg);
 		io.sockets.emit('new message', {
 			'user' : socket.username,
 			'body' : msg,
 			'timestamp' : Date.now()
 		});
+	});
+
+	socket.on('scroll down', function(callback) {
+		callback(true);
 	});
 
 	socket.on('disconnect', function() {

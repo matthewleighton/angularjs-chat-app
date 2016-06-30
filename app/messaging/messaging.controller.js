@@ -29,7 +29,19 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 	});
 
 	chatSocket.on('new message', function(msg) {
+		var div = document.getElementById("received-messages");
+		var scrollAtBottom = false;
+		if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
+			scrollAtBottom = true;
+		}
+
 		vm.messageStorage.push(msg);
+
+		if (scrollAtBottom) {
+			scrollDown();
+		}
+
+
 	});
 
 
@@ -51,10 +63,22 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 	}
 
 	function sendMessage(msg) {
-		console.log(msg);
-		console.log("Sending message");
-		chatSocket.emit('sending message', msg);
-		$scope.msg = '';
+		if (msg) {
+			console.log("Sending message: " + msg);
+
+			chatSocket.emit('sending message', msg);
+			scrollDown();
+
+			$scope.msg = '';
+				
+		}
+	}
+
+	function scrollDown() {
+		chatSocket.emit('scroll down', function(callback) {
+			var objDiv = document.getElementById("received-messages");
+			objDiv.scrollTop = objDiv.scrollHeight;
+		});
 	}
 
 
