@@ -86,6 +86,12 @@ login {
 	width: 80%;
 }
 
+@media (max-width: 580px) {
+	.container {
+		width: 100%;
+	}
+}
+
 #users-list {
 	float: left;
 	padding-top: 15px;
@@ -120,10 +126,20 @@ login {
 	
 	height: 80%;
 	padding: 30px;
+	margin-top: 10px;
 	margin-bottom: 10px;
 	overflow: auto;
 	width: 100%;
 	word-wrap: break-word;
+
+	a {
+		color: #365899;
+		text-decoration: none;
+	}
+
+	a:visited {
+		color: #365899;	
+	}
 }
 
 #message-container {

@@ -4,15 +4,16 @@ angular
 	.module('messaging')
 	.controller('MessagingController', MessagingController);
 
-MessagingController.$inject = ['chatSocket', 'MessagingService', '$scope', '$location'];
+MessagingController.$inject = ['chatSocket', 'MessagingService', '$scope', '$location', '$sce'];
 
-function MessagingController(chatSocket, MessagingService, $scope, $location) {
+function MessagingController(chatSocket, MessagingService, $scope, $location, $sce) {
 	var vm = this;
 
 	vm.messageStorage = [];
 
 	vm.checkLoginStatus = checkLoginStatus;
 	vm.focusTextarea = focusTextarea;
+	vm.insertAnchorTags = insertAnchorTags;
 	vm.listenForEnter = listenForEnter;
 	vm.sendMessage = sendMessage;
 	
@@ -63,6 +64,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 		MessagingService.focusTextarea();
 	}
 
+	function insertAnchorTags(msg) {
+		return MessagingService.insertAnchorTags(msg);
+	}
+
 	function listenForEnter() {
 		document.onkeypress = function(e) {
 			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
@@ -86,11 +91,11 @@ function MessagingController(chatSocket, MessagingService, $scope, $location) {
 
 	function sendMessage(msg) {
 		if (msg) {
-			console.log("Sending message: " + msg);
-
+			msg = insertAnchorTags(msg);
+			$sce.trustAsHtml(msg);
+			
 			chatSocket.emit('sending message', msg);
 			scrollDown();
-
 			$scope.msg = '';
 			focusTextarea();				
 		}

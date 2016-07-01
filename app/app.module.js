@@ -5,5 +5,6 @@ angular.module('chatApp', [
 	'ngRoute',
 	'login',
 	'messaging',
-	'btford.socket-io'
+	'btford.socket-io',
+	'ngSanitize'
 ]);
