@@ -44,6 +44,9 @@ module.exports = function(config) {
         'app/login/login.component.js',
 
         'app/messaging/messaging.module.js',
+        'app/messaging/messaging.controller.js',
+        'app/messaging/messaging.service.js',
+        'app/messaging/messaging.component.js',
 
 
 
