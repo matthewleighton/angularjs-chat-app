@@ -26,6 +26,7 @@ module.exports = function(config) {
 
         'bower_components/angular-socket-io/socket.js',
         'bower_components/angular-route/angular-route.js',
+        'bower_components/angular-sanitize.min.js',
         
         'app/app.module.js',
 
@@ -34,8 +35,7 @@ module.exports = function(config) {
 
 
         
-
-        
+                
 
 
         'app/login/login.module.js',

@@ -30,19 +30,30 @@ function MessagingService(chatSocket) {
 	}
 
 	function insertAnchorTags(msg) {
-		var reg = /\b((https?:\/\/www\.)|(https?:\/\/)|(www\.))(\w+\.[a-z.]+)(\S+)?/gi;
+		//var reg = /\b((https?:\/\/www\.)|(https?:\/\/)|(www\.))(\w+\.[a-z.]+)(\S+)?/gi;
+		var reg = /\b((https?:\/\/www\.)|(https?:\/\/)|(www\.))(\w+\.[a-z.]+)([^ ,\n]*)/gi;
+
 
 		var result;
+		var minIndex = 0;
 
-		while (result = reg.exec(msg)) {
 
+		/*while ((result = reg.exec(msg)) && result['index'] >= minIndex) {
+			console.log(result);
+		}*/
+
+
+		var i = 0;
+		while ((result = reg.exec(msg)) && i < 5) {
+			console.log(result);
+			i++;
 
 			console.log("///////////////////////////");
 			if (!result[6] || (result[6].charAt(0) != "'" && result[6].charAt(0) != "<" && result[6].charAt(result[6].length-1) != ">")) {
 				console.log("Transforming link");
 				console.log("Element 6 is " + result[6]);
 
-							
+				
 				var address = result[0];
 
 				var urlStart = result[1];
