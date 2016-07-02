@@ -12,6 +12,7 @@ function LoginService(chatSocket) {
 
 		attemptLogin : attemptLogin,
 		formatUsername : formatUsername,
+		logout : logout,
 		pushUsername : pushUsername,
 		validateUsernameLength : validateUsernameLength,
 		validateUsernameUniqueness : validateUsernameUniqueness
@@ -43,6 +44,10 @@ function LoginService(chatSocket) {
 	function formatUsername(username) {
 		username = username.toLowerCase();
 		return username.charAt(0).toUpperCase() + username.slice(1);
+	}
+
+	function logout() {
+		chatSocket.emit('logout');
 	}
 
 	function pushUsername(username) {

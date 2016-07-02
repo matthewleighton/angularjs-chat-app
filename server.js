@@ -38,6 +38,10 @@ io.on('connect', function(socket) {
 		callback(usersArray);
 	});
 
+	socket.on('logout', function() {
+		logout(socket);
+	})
+
 	socket.on('sending message', function(msg) {
 		var date = createTimestamp();
 
@@ -53,15 +57,9 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('disconnect', function() {
-		if (socket.username){
-			var index = usersArray.indexOf(socket.username);
-			if (index > -1) {
-				usersArray.splice(index, 1);
-			}
-			console.log(usersArray);
-		}
+		logout(socket);
 
-		io.sockets.emit('send user list', usersArray);
+		
 		console.log('User disconnected.');
 	});
 
@@ -77,6 +75,18 @@ io.on('connect', function(socket) {
 		var hour = today.getHours();
 
 		return day + "/" + month + ", " + hour + ":" + minute;
+	}
+
+	function logout(socket) {
+		if (socket.username){
+			var index = usersArray.indexOf(socket.username);
+			if (index > -1) {
+				usersArray.splice(index, 1);
+			}
+			console.log(usersArray);
+		}
+
+		io.sockets.emit('send user list', usersArray);
 	}
 
 	

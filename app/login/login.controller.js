@@ -10,7 +10,10 @@ function LoginController(LoginService, chatSocket, $location, $scope) {
 	var vm = this;
 
 	vm.attemptLogin = attemptLogin;
+	vm.logout = logout;
 	vm.error = '';
+
+	logout();
 	
 	/////////////////////
 
@@ -27,5 +30,9 @@ function LoginController(LoginService, chatSocket, $location, $scope) {
 				}
 			});
 		});
+	}
+
+	function logout() {
+		LoginService.logout();
 	}
 }

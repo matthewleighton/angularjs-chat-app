@@ -30,9 +30,7 @@ function MessagingService(chatSocket) {
 	}
 
 	function insertAnchorTags(msg) {
-		//var reg = /\b((https?:\/\/www\.)|(https?:\/\/)|(www\.))(\w+\.[a-z.]+)(\S+)?/gi;
 		var reg = /\b((https?:\/\/www\.)|(https?:\/\/)|(www\.))(\w+\.[a-z.]+)([^ ,\n]*)/gi;
-
 
 		var result;
 		var minIndex = 0;
