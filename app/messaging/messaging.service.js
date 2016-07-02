@@ -36,49 +36,22 @@ function MessagingService(chatSocket) {
 
 		var result;
 		var minIndex = 0;
-
-
-		/*while ((result = reg.exec(msg)) && result['index'] >= minIndex) {
-			console.log(result);
-		}*/
-
-
-		var i = 0;
-		while ((result = reg.exec(msg)) && i < 5) {
-			console.log(result);
-			i++;
-
-			console.log("///////////////////////////");
-			if (!result[6] || (result[6].charAt(0) != "'" && result[6].charAt(0) != "<" && result[6].charAt(result[6].length-1) != ">")) {
-				console.log("Transforming link");
-				console.log("Element 6 is " + result[6]);
-
-				
-				var address = result[0];
-
+		while (result = reg.exec(msg)) {
+			if (result['index'] >= minIndex) {
 				var urlStart = result[1];
+
 				if (result[1].charAt(0) != 'h') {
-					urlStart = 'http://' + result[1];
+					urlStart = 'http://' + urlStart;
 				}
 
+				var visibleLink = result[0];
+				var href = urlStart + result[5] + result[6];
+				var anchorTag = "<a href='" + href + "' target='_blank'>" + visibleLink + "</a>";
 
-				if (result[6]) {
-					result[5] = result[5] + result[6];
-				}
+				minIndex += anchorTag.length;
 
-				var linkUrl = urlStart + result[5];
-				var visibleUrl = result[1] + result[5];
-
-				
-
-				var anchorTag = "<a href='" + linkUrl + "' target='_blank'>" + address + "</a>";
-
-				console.log(anchorTag);
-
-				console.log("index is " + result['index']);
-
-				msg = msg.substr(0, result['index']) + anchorTag + msg.substr(result['index'] + visibleUrl.length);
-			}		
+				msg = msg.substr(0, result['index']) + anchorTag + msg.substr(result['index'] + visibleLink.length);
+			}
 		}
 
 		return msg;
