@@ -11,7 +11,8 @@ function MessagingService(chatSocket) {
 		checkLoginStatus : checkLoginStatus,
 		focusTextarea : focusTextarea,
 		insertAnchorTags : insertAnchorTags,
-		listenForUsers : listenForUsers
+		listenForUsers : listenForUsers,
+		playMessageAlert : playMessageAlert
 	}
 
 	return service;
@@ -59,5 +60,12 @@ function MessagingService(chatSocket) {
 	// TODO - Potentially refactor this to be done here rather than in the controller.
 	function listenForUsers() {
 		
+	}
+
+	function playMessageAlert() {
+		if (document.hidden) {
+			var audio = new Audio('assets/audio/mail.mp3');
+			audio.play();
+		}
 	}
 }

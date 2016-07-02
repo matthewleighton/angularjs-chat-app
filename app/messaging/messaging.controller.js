@@ -39,6 +39,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			scrollAtBottom = true;
 		}
 
+		MessagingService.playMessageAlert();
+
 		vm.messageStorage.push(msg);
 
 		if (scrollAtBottom) {
