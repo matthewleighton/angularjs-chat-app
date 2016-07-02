@@ -4,10 +4,12 @@ var server = http.createServer(app);
 
 var usersArray = [];
 
-app.use(express.static(__dirname));
 
-server.listen(3001);
-console.log('Server listening on port 3001');
+app.use("/chat", express.static(__dirname));
+
+
+server.listen(3000);
+console.log('Server listening on port 3000');
 
 var io = require('socket.io')(server);
 
