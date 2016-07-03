@@ -8,6 +8,8 @@ MessagingService.$inject = ['chatSocket'];
 
 function MessagingService(chatSocket) {
 	var service = {
+		messageAlertSound : new Audio('assets/audio/mail.mp3'),
+
 		checkLoginStatus : checkLoginStatus,
 		focusTextarea : focusTextarea,
 		insertAnchorTags : insertAnchorTags,
@@ -64,8 +66,7 @@ function MessagingService(chatSocket) {
 
 	function playMessageAlert() {
 		if (document.hidden) {
-			var audio = new Audio('assets/audio/mail.mp3');
-			audio.play();
+			this.messageAlertSound.play();
 		}
 	}
 }

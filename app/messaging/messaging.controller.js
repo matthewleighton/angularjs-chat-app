@@ -19,10 +19,14 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	
 	/////////////////////
 	
-	// Run this when the page loads to ensure users are logged in.
+	
+	//var audio = new Audio('assets/audio/mail.mp3');
+
 	checkLoginStatus();
 	focusTextarea();
 	listenForEnter();
+
+
 	
 	chatSocket.emit('request activeUsers', function(activeUsers) {
 		vm.activeUsers = activeUsers;
@@ -40,6 +44,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 
 		MessagingService.playMessageAlert();
+
+
 
 		vm.messageStorage.push(msg);
 
