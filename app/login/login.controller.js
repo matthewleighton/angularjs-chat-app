@@ -13,6 +13,8 @@ function LoginController(LoginService, MessagingService, chatSocket, $location, 
 	vm.logout = logout;
 	vm.error = '';
 
+	chatSocket.removeAllListeners();
+
 	logout();
 	
 	/////////////////////

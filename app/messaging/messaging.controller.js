@@ -20,9 +20,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	
 	/////////////////////
 	
-	
-	//var audio = new Audio('assets/audio/mail.mp3');
-
 	checkLoginStatus();
 	focusTextarea();
 	listenForEnter();
@@ -30,7 +27,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	setInterval(function() {
 		resetTitle();
 	}, 2000);
-
 	
 	chatSocket.emit('request activeUsers', function(activeUsers) {
 		vm.activeUsers = activeUsers;
