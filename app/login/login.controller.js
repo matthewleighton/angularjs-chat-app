@@ -4,9 +4,9 @@ angular
 	.module('login')
 	.controller('LoginController', LoginController);
 
-LoginController.$inject = ['LoginService', 'chatSocket', '$location', '$scope'];
+LoginController.$inject = ['LoginService', 'MessagingService', 'chatSocket', '$location', '$scope'];
 
-function LoginController(LoginService, chatSocket, $location, $scope) {
+function LoginController(LoginService, MessagingService, chatSocket, $location, $scope) {
 	var vm = this;
 
 	vm.attemptLogin = attemptLogin;

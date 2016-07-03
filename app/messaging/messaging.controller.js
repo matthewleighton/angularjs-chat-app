@@ -15,6 +15,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	vm.focusTextarea = focusTextarea;
 	vm.insertAnchorTags = insertAnchorTags;
 	vm.listenForEnter = listenForEnter;
+	vm.resetTitle = resetTitle;
 	vm.sendMessage = sendMessage;
 	
 	/////////////////////
@@ -25,7 +26,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	checkLoginStatus();
 	focusTextarea();
 	listenForEnter();
-
+	
+	setInterval(function() {
+		resetTitle();
+	}, 2000);
 
 	
 	chatSocket.emit('request activeUsers', function(activeUsers) {
@@ -43,6 +47,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			scrollAtBottom = true;
 		}
 
+		MessagingService.updateUnreadMessageCount();
 		MessagingService.playMessageAlert();
 
 		vm.messageStorage.push(msg);
@@ -51,7 +56,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			scrollDown();
 		}
 	});
-
 
 	function checkLoginStatus() {
 		var promise = MessagingService.checkLoginStatus();
@@ -64,6 +68,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				});
 			}
 		});
+	}
+
+	function resetTitle() {
+		MessagingService.resetTitle();
 	}
 
 	function focusTextarea() {

@@ -8,6 +8,7 @@ MessagingService.$inject = ['chatSocket'];
 
 function MessagingService(chatSocket) {
 	var service = {
+		unreadMessageCount : 0,
 		messageAlertSound : new Audio('assets/audio/mail.mp3'),
 		messageAlertTimeout : false,
 
@@ -15,7 +16,9 @@ function MessagingService(chatSocket) {
 		focusTextarea : focusTextarea,
 		insertAnchorTags : insertAnchorTags,
 		listenForUsers : listenForUsers,
-		playMessageAlert : playMessageAlert
+		playMessageAlert : playMessageAlert,
+		resetTitle : resetTitle,
+		updateUnreadMessageCount : updateUnreadMessageCount
 	}
 
 	return service;
@@ -73,6 +76,20 @@ function MessagingService(chatSocket) {
 			setTimeout(function() {
 				service.messageAlertTimeout = false;
 			}, 5000);
+		}
+	}
+
+	function resetTitle() {
+		if (!document.hidden) {
+			window.document.title = "Chat App";
+			this.unreadMessageCount = 0;
+		}
+	}
+
+	function updateUnreadMessageCount() {
+		if (document.hidden) {
+			this.unreadMessageCount += 1;
+			window.document.title = "Chat App(" + this.unreadMessageCount + ")";
 		}
 	}
 }
