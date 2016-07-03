@@ -10,7 +10,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	var vm = this;
 
 	vm.messageStorage = [];
-
+	
 	vm.checkLoginStatus = checkLoginStatus;
 	vm.focusTextarea = focusTextarea;
 	vm.insertAnchorTags = insertAnchorTags;
@@ -44,8 +44,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 
 		MessagingService.playMessageAlert();
-
-
 
 		vm.messageStorage.push(msg);
 
