@@ -10,11 +10,13 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	var vm = this;
 
 	vm.messageStorage = [];
+	vm.msg = '';
 	
+	//vm.adjustTextareaSize = adjustTextareaSize;
 	vm.checkLoginStatus = checkLoginStatus;
 	vm.focusTextarea = focusTextarea;
 	vm.insertAnchorTags = insertAnchorTags;
-	vm.listenForEnter = listenForEnter;
+	//vm.listenForEnter = listenForEnter;
 	vm.resetTitle = resetTitle;
 	vm.sendMessage = sendMessage;
 	
@@ -22,8 +24,9 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	
 	checkLoginStatus();
 	focusTextarea();
-	listenForEnter();
+	//listenForEnter();
 	
+	//TODO - Trigger this by activating window, rather than on a constantly running interval.
 	setInterval(function() {
 		resetTitle();
 	}, 2000);
@@ -53,6 +56,65 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 	});
 
+	document.onkeydown = function(e) {
+		if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
+			sendMessage(vm.msg);
+		}
+
+		
+		setTimeout(function() {
+			adjustTextareaSize(e);
+		}, 0);
+		
+	}
+/*
+	// Backspace is not registered by onkeypress, so we catch it via onkeydown instead.
+	document.onkeydown = function(e) {
+		if (e.keyCode == 8) {
+			adjustTextareaSize(e);
+		}
+	}
+*/
+/*
+	document.onkeyup = function(e) {
+		if (e.ctrlKey && e.keyCode == 86) {
+			adjustTextareaSize(e);
+		}
+	}
+*/
+
+/*
+	document.getElementById('message-textarea').addEventListener("paste", function(e) {
+		//alert(e.clipboardData.getData('Text'));
+		adjustTextareaSize(e);
+		//console.log(e);
+	});
+*/
+
+	function adjustTextareaSize() {
+		var textarea = document.getElementById('message-textarea');
+		var messagesDiv = document.getElementById('received-messages');
+
+		if (vm.msg.length == 0) {
+			textarea.style.height = "42px";
+			messagesDiv.style.height = "80%";
+		} else {
+			var initialTextareaHeight = textarea.style.height.slice(0, -2);
+			var form = document.getElementById('message-form');
+
+			textarea.style.height = 'auto';
+			textarea.style.height = textarea.scrollHeight + 2 + 'px';
+
+			var x = parseInt(textarea.style.height.slice(0, -2)) - 42;
+			
+			messagesDiv.style.height = "calc(80% - " + x + "px)";
+
+			var newTextareaHeight = parseInt(textarea.style.height.slice(0, -2))
+
+			messagesDiv.scrollTop = messagesDiv.scrollTop - (initialTextareaHeight - newTextareaHeight);
+		}
+	}
+
 	function checkLoginStatus() {
 		var promise = MessagingService.checkLoginStatus();
 
@@ -78,14 +140,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		return MessagingService.insertAnchorTags(msg);
 	}
 
-	function listenForEnter() {
-		document.onkeypress = function(e) {
-			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
-				sendMessage($scope.msg);
-			}
-		}
-	}
-
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
 	}
@@ -100,14 +154,19 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function sendMessage(msg) {
+		console.log("tying to send message");
 		if (msg) {
 			msg = insertAnchorTags(msg);
 			$sce.trustAsHtml(msg);
 			
 			chatSocket.emit('sending message', msg);
 			scrollDown();
-			$scope.msg = '';
-			focusTextarea();				
+			vm.msg = '';
+			focusTextarea();
+			setTimeout(function() {
+				adjustTextareaSize();	
+			}, 0);
+			
 		}
 	}
 }

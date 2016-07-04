@@ -15,8 +15,8 @@
 		</div>
 		<div id="message-entry">
 			<form id="message-form">
-				<textarea ng-model="msg" placeholder="Write a message..." id="message-textarea"></textarea>
-				<img src="assets/img/paper-plane.png" id="send-btn" ng-click="$ctrl.sendMessage(msg)" />
+				<textarea ng-model="$ctrl.msg" placeholder="Write a message..." id="message-textarea" rows="2"></textarea>
+				<img src="assets/img/paper-plane.png" id="send-btn" ng-click="$ctrl.sendMessage($ctrl.msg)" />
 			</form>
 			
 		</div>
