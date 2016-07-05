@@ -12,11 +12,9 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	vm.messageStorage = [];
 	vm.msg = '';
 	
-	//vm.adjustTextareaSize = adjustTextareaSize;
 	vm.checkLoginStatus = checkLoginStatus;
 	vm.focusTextarea = focusTextarea;
 	vm.insertAnchorTags = insertAnchorTags;
-	//vm.listenForEnter = listenForEnter;
 	vm.resetTitle = resetTitle;
 	vm.sendMessage = sendMessage;
 	
@@ -24,7 +22,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	
 	checkLoginStatus();
 	focusTextarea();
-	//listenForEnter();
+	getInitialCssValues();
 	
 	//TODO - Trigger this by activating window, rather than on a constantly running interval.
 	setInterval(function() {
@@ -61,64 +59,14 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			sendMessage(vm.msg);
 		}
 
-		
 		setTimeout(function() {
-			adjustTextareaSize(e);
+			adjustTextareaSize();
 		}, 0);
-		
 	}
-/*
-	// Backspace is not registered by onkeypress, so we catch it via onkeydown instead.
-	document.onkeydown = function(e) {
-		if (e.keyCode == 8) {
-			adjustTextareaSize(e);
-		}
-	}
-*/
-/*
-	document.onkeyup = function(e) {
-		if (e.ctrlKey && e.keyCode == 86) {
-			adjustTextareaSize(e);
-		}
-	}
-*/
 
-/*
-	document.getElementById('message-textarea').addEventListener("paste", function(e) {
-		//alert(e.clipboardData.getData('Text'));
-		adjustTextareaSize(e);
-		//console.log(e);
-	});
-*/
 
 	function adjustTextareaSize() {
-		var textarea = document.getElementById('message-textarea');
-		var messagesDiv = document.getElementById('received-messages');
-
-		if (vm.msg.length == 0) {
-			textarea.style.height = "42px";
-			messagesDiv.style.height = "80%";
-		} else {
-			var form = document.getElementById('message-form');
-			var initialTextareaHeight = textarea.style.height.slice(0, -2);
-			
-			textarea.style.height = 'auto';
-			textarea.style.height = textarea.scrollHeight + 2 + 'px';
-
-			var heightInt = parseInt(textarea.style.height.slice(0, -2)) - 42;
-			
-			messagesDiv.style.height = "calc(80% - " + heightInt + "px)";
-
-			var newTextareaHeight = parseInt(textarea.style.height.slice(0, -2))
-
-			// Setting a maximum height for the textarea
-			if (newTextareaHeight > 282) {
-				textarea.style.height = "282px";				
-				messagesDiv.style.height = "calc(80% - 240px)";
-			}
-
-			messagesDiv.scrollTop = messagesDiv.scrollTop - (initialTextareaHeight - newTextareaHeight);
-		}
+		MessagingService.adjustTextareaSize();
 	}
 
 	function checkLoginStatus() {
@@ -134,12 +82,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 	}
 
-	function resetTitle() {
-		MessagingService.resetTitle();
-	}
-
 	function focusTextarea() {
 		MessagingService.focusTextarea();
+	}
+
+	function getInitialCssValues() {
+		MessagingService.getInitialCssValues();
 	}
 
 	function insertAnchorTags(msg) {
@@ -148,6 +96,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
+	}
+
+	function resetTitle() {
+		MessagingService.resetTitle();
 	}
 
 	// This is triggered by a callback because it needs to happen AFTER the new message has been received from the server.

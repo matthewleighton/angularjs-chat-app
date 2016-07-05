@@ -12,8 +12,10 @@ function MessagingService(chatSocket) {
 		messageAlertSound : new Audio('assets/audio/mail.mp3'),
 		messageAlertTimeout : false,
 
+		adjustTextareaSize : adjustTextareaSize,
 		checkLoginStatus : checkLoginStatus,
 		focusTextarea : focusTextarea,
+		getInitialCssValues : getInitialCssValues,
 		insertAnchorTags : insertAnchorTags,
 		listenForUsers : listenForUsers,
 		playMessageAlert : playMessageAlert,
@@ -23,6 +25,40 @@ function MessagingService(chatSocket) {
 
 	return service;
 	////////////////////
+
+	console.log("TEST!)");
+
+	function adjustTextareaSize(msg) {
+		var textarea = document.getElementById('message-textarea');
+		var messagesDiv = document.getElementById('received-messages');
+
+		if (textarea.value.length == 0) {
+			// These are the initial values that the css should have when the page first loads.
+			textarea.style.height = "42px";
+			messagesDiv.style.height = "80%";
+		} else {
+			var form = document.getElementById('message-form');
+			var initialTextareaHeight = textarea.style.height.slice(0, -2);
+			
+			textarea.style.height = 'auto';
+			textarea.style.height = textarea.scrollHeight + 2 + 'px';
+
+			var heightInt = parseInt(textarea.style.height.slice(0, -2)) - 42;
+			
+			messagesDiv.style.height = "calc(80% - " + heightInt + "px)";
+
+			var newTextareaHeight = parseInt(textarea.style.height.slice(0, -2))
+
+			// Setting a maximum height for the textarea
+			// TODO - Specify where these values come from. Generate them rather than using them hard-coded.
+			if (newTextareaHeight > 282) {
+				textarea.style.height = "282px";				
+				messagesDiv.style.height = "calc(80% - 240px)";
+			}
+
+			messagesDiv.scrollTop = messagesDiv.scrollTop - (initialTextareaHeight - newTextareaHeight);
+		}
+	}
 
 	function checkLoginStatus() {
 		return new Promise(function(resolve, reject) {
@@ -34,6 +70,24 @@ function MessagingService(chatSocket) {
 
 	function focusTextarea() {
 		document.getElementById('message-textarea').focus();
+	}
+
+
+	// TODO
+	// Use this function to find the textarea/messagesDiv css values stored in the style sheet.
+	// This is so that the ajustTextareaSize() function doesn't need to use hard-coded values for its reset values.
+	// I need a way to get the value direct from the style sheet - The computed value does not work if the original value is a percentage.
+	function getInitialCssValues() {
+		var textarea = document.getElementById('message-textarea');
+		textarea = window.getComputedStyle(textarea);
+
+		var messagesDiv = document.getElementById('received-messages');
+		messagesDiv = window.getComputedStyle(messagesDiv);
+
+		this.initialCssValues = {
+			textareaHeight : textarea.height,
+			messagesDivHeight : messagesDiv.height
+		}
 	}
 
 	function insertAnchorTags(msg) {
