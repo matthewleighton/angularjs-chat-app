@@ -56,6 +56,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	document.onkeydown = function(e) {
 		if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
+			e.preventDefault();
 			sendMessage(vm.msg);
 		}
 
@@ -112,19 +113,17 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function sendMessage(msg) {
-		console.log("tying to send message");
 		if (msg) {
 			msg = insertAnchorTags(msg);
 			$sce.trustAsHtml(msg);
-			
 			chatSocket.emit('sending message', msg);
-			scrollDown();
-			vm.msg = '';
-			focusTextarea();
-			setTimeout(function() {
-				adjustTextareaSize();	
-			}, 0);
 			
+			vm.msg = '';
+			document.getElementById('message-textarea').value = '';
+
+			scrollDown();
+			focusTextarea();
+			adjustTextareaSize();
 		}
 	}
 }
