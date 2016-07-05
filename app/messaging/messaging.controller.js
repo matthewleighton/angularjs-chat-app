@@ -21,51 +21,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	/////////////////////
 	
 	checkLoginStatus();
-	focusTextarea();
-	getInitialCssValues();
 	
-	//TODO - Trigger this by activating window, rather than on a constantly running interval.
-	setInterval(function() {
-		resetTitle();
-	}, 2000);
-	
-	chatSocket.emit('request activeUsers', function(activeUsers) {
-		vm.activeUsers = activeUsers;
-	});
-
-	chatSocket.on('send user list', function(activeUsers) {
-		vm.activeUsers = activeUsers;
-	});
-
-	chatSocket.on('new message', function(msg) {
-		var div = document.getElementById("received-messages");
-		var scrollAtBottom = false;
-		if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
-			scrollAtBottom = true;
-		}
-
-		MessagingService.updateUnreadMessageCount();
-		MessagingService.playMessageAlert();
-
-		vm.messageStorage.push(msg);
-
-		if (scrollAtBottom) {
-			scrollDown();
-		}
-	});
-
-	document.onkeydown = function(e) {
-		if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
-			e.preventDefault();
-			sendMessage(vm.msg);
-		}
-
-		setTimeout(function() {
-			adjustTextareaSize();
-		}, 0);
-	}
-
-
 	function adjustTextareaSize() {
 		MessagingService.adjustTextareaSize();
 	}
@@ -79,6 +35,15 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				$scope.$apply(function() {
 					$location.path('login');
 				});
+			} else {
+				focusTextarea();
+				getInitialCssValues();
+				activateListeners();
+				
+				//TODO - Trigger this by activating window, rather than on a constantly running interval.
+				setInterval(function() {
+					resetTitle();
+				}, 2000);
 			}
 		});
 	}
@@ -125,5 +90,43 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			focusTextarea();
 			adjustTextareaSize();
 		}
+	}
+
+	function activateListeners() {
+		chatSocket.emit('request activeUsers', function(activeUsers) {
+			vm.activeUsers = activeUsers;
+		});
+
+		chatSocket.on('send user list', function(activeUsers) {
+			vm.activeUsers = activeUsers;
+		});
+
+		chatSocket.on('new message', function(msg) {
+			var div = document.getElementById("received-messages");
+			var scrollAtBottom = false;
+			if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
+				scrollAtBottom = true;
+			}
+
+			MessagingService.updateUnreadMessageCount();
+			MessagingService.playMessageAlert();
+
+			vm.messageStorage.push(msg);
+
+			if (scrollAtBottom) {
+				scrollDown();
+			}
+		});
+
+		document.onkeydown = function(e) {
+			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
+				e.preventDefault();
+				sendMessage(vm.msg);
+			}
+
+			setTimeout(function() {
+				adjustTextareaSize();
+			}, 0);
+		}	
 	}
 }
