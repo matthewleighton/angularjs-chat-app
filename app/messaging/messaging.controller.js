@@ -11,16 +11,82 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	vm.messageStorage = [];
 	vm.msg = '';
+	vm.typingAlertTimeouts = {};
+	vm.typingArray = [];
+	vm.typingString = '';
 	
 	vm.checkLoginStatus = checkLoginStatus;
 	vm.focusTextarea = focusTextarea;
 	vm.insertAnchorTags = insertAnchorTags;
 	vm.resetTitle = resetTitle;
 	vm.sendMessage = sendMessage;
+
 	
 	/////////////////////
 	
 	checkLoginStatus();
+
+	///// Listeners /////
+
+	function activateListeners() {
+		chatSocket.emit('request activeUsers', function(activeUsers) {
+			vm.activeUsers = activeUsers;
+		});
+
+		chatSocket.on('send user list', function(activeUsers) {
+			vm.activeUsers = activeUsers;
+		});
+
+		chatSocket.on('new message', function(msg) {
+			var div = document.getElementById("received-messages");
+			var scrollAtBottom = false;
+			if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
+				scrollAtBottom = true;
+			}
+
+			MessagingService.updateUnreadMessageCount();
+			MessagingService.playMessageAlert();
+
+			vm.messageStorage.push(msg);
+
+			if (scrollAtBottom) {
+				scrollDown();
+			}
+		});
+
+		chatSocket.on('update typing array', function(username) {
+			
+			if (vm.typingArray.indexOf(username) < 0) {
+				vm.typingArray.push(username);
+				updateTypingString();
+			}
+
+			if (vm.typingAlertTimeouts[username] > -1) {
+				clearTimeout(vm.typingAlertTimeouts[username]);
+			}
+			
+			vm.typingAlertTimeouts[username] = 	setTimeout(function() {
+				clearUserTypingAlert(username);
+			}, 2000);
+		});
+
+		document.onkeydown = function(e) {
+			if (document.activeElement.id == 'message-textarea') {
+				if (e.keyCode != 13) {
+					chatSocket.emit('user is typing');
+				} else if (e.keyCode == 13 && !e.shiftKey) {
+					e.preventDefault();
+					sendMessage(vm.msg);
+				}
+
+				setTimeout(function() {
+					adjustTextareaSize();
+				}, 0);
+			}
+		}	
+	}
+
+	///// Functions /////
 	
 	function adjustTextareaSize() {
 		MessagingService.adjustTextareaSize();
@@ -46,6 +112,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				}, 2000);
 			}
 		});
+	}
+
+	function clearUserTypingAlert(username) {
+		console.log("Trying to remove user from typing array...");
+		var index = vm.typingArray.indexOf(username);
+		console.log(index);
+		if (index > -1) {
+			vm.typingArray.splice(index, 1);
+			updateTypingString();
+		}
 	}
 
 	function focusTextarea() {
@@ -88,45 +164,26 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 			scrollDown();
 			focusTextarea();
-			adjustTextareaSize();
 		}
 	}
 
-	function activateListeners() {
-		chatSocket.emit('request activeUsers', function(activeUsers) {
-			vm.activeUsers = activeUsers;
-		});
-
-		chatSocket.on('send user list', function(activeUsers) {
-			vm.activeUsers = activeUsers;
-		});
-
-		chatSocket.on('new message', function(msg) {
-			var div = document.getElementById("received-messages");
-			var scrollAtBottom = false;
-			if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
-				scrollAtBottom = true;
-			}
-
-			MessagingService.updateUnreadMessageCount();
-			MessagingService.playMessageAlert();
-
-			vm.messageStorage.push(msg);
-
-			if (scrollAtBottom) {
-				scrollDown();
+	function updateTypingString() {
+		console.log('Updating typing string');
+		
+		$scope.$apply(function() {
+			if (vm.typingArray.length == 0) {
+				vm.typingString = '';
+			} else if (vm.typingArray.length == 1) {
+				vm.typingString = vm.typingArray[0] + " is typing...";
+			} else if (vm.typingArray.length > 1 && vm.typingArray.length < 4) {
+				var string = vm.typingArray.join(", ") + " are typing...";
+				var lastCommaIndex = string.lastIndexOf(",");
+				vm.typingString = string.substr(0, lastCommaIndex) + " and" + string.substr(lastCommaIndex + 1, string.length);
+			} else {
+				vm.typingString = 'People are typing...';
 			}
 		});
 
-		document.onkeydown = function(e) {
-			if (e.keyCode == 13 && document.activeElement.id == 'message-textarea' && !e.shiftKey) {
-				e.preventDefault();
-				sendMessage(vm.msg);
-			}
-
-			setTimeout(function() {
-				adjustTextareaSize();
-			}, 0);
-		}	
+		console.log(vm.typingString);
 	}
 }

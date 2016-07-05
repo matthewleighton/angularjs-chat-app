@@ -58,6 +58,11 @@ io.on('connect', function(socket) {
 		callback(true);
 	});
 
+	socket.on('user is typing', function() {
+		console.log(socket.username + " is typing.");
+		io.sockets.emit('update typing array', socket.username);
+	});
+
 	socket.on('disconnect', function() {
 		logout(socket);
 
