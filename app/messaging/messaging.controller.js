@@ -55,7 +55,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 
 		chatSocket.on('update typing array', function(username) {
-			
+			if (username == chatSocket.username) {
+				return;
+			}
+
 			if (vm.typingArray.indexOf(username) < 0) {
 				vm.typingArray.push(username);
 				updateTypingString();
@@ -161,6 +164,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			
 			vm.msg = '';
 			document.getElementById('message-textarea').value = '';
+
+			clearUserTypingAlert(chatSocket.username);
 
 			scrollDown();
 			focusTextarea();

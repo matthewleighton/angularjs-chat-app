@@ -51,6 +51,7 @@ function LoginService(chatSocket) {
 	}
 
 	function pushUsername(username) {
+		chatSocket.username = username;
 		chatSocket.emit('pushUsername', username);
 	}
 
