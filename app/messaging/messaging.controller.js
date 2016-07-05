@@ -29,6 +29,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	///// Listeners /////
 
 	function activateListeners() {
+		chatSocket.on('clearing user typing alert', function(username) {
+			console.log(username + " just sent a message. Now clear the alert");
+		});
+
 		chatSocket.emit('request activeUsers', function(activeUsers) {
 			vm.activeUsers = activeUsers;
 		});
@@ -38,6 +42,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 
 		chatSocket.on('new message', function(msg) {
+			clearUserTypingAlert(msg.user);
+
 			var div = document.getElementById("received-messages");
 			var scrollAtBottom = false;
 			if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
@@ -118,7 +124,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function clearUserTypingAlert(username) {
-		console.log("Trying to remove user from typing array...");
 		var index = vm.typingArray.indexOf(username);
 		console.log(index);
 		if (index > -1) {

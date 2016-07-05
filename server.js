@@ -17,9 +17,14 @@ var io = require('socket.io')(server);
 io.on('connect', function(socket) {
 	console.log('User connected.');
 
-	socket.on('requestUsersArray', function(callback) {
-		console.log("Sending users array");
-		callback(usersArray);
+	socket.on('login check', function(callback) {
+		console.log("Received request to check login status");
+		console.log(socket.username);
+		callback(socket.username);
+	});
+
+	socket.on('logout', function() {
+		logout(socket);
 	});
 
 	socket.on('pushUsername', function(username) {
@@ -30,19 +35,14 @@ io.on('connect', function(socket) {
 		io.sockets.emit('send user list', usersArray);
 	});
 
-	socket.on('login check', function(callback) {
-		console.log("Received request to check login status");
-		console.log(socket.username);
-		callback(socket.username);
-	});
-
 	socket.on('request activeUsers', function(callback) {
 		callback(usersArray);
 	});
 
-	socket.on('logout', function() {
-		logout(socket);
-	})
+	socket.on('requestUsersArray', function(callback) {
+		console.log("Sending users array");
+		callback(usersArray);
+	});
 
 	socket.on('sending message', function(msg) {
 		var date = createTimestamp();
