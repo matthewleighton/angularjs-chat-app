@@ -99,17 +99,23 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			textarea.style.height = "42px";
 			messagesDiv.style.height = "80%";
 		} else {
-			var initialTextareaHeight = textarea.style.height.slice(0, -2);
 			var form = document.getElementById('message-form');
-
+			var initialTextareaHeight = textarea.style.height.slice(0, -2);
+			
 			textarea.style.height = 'auto';
 			textarea.style.height = textarea.scrollHeight + 2 + 'px';
 
-			var x = parseInt(textarea.style.height.slice(0, -2)) - 42;
+			var heightInt = parseInt(textarea.style.height.slice(0, -2)) - 42;
 			
-			messagesDiv.style.height = "calc(80% - " + x + "px)";
+			messagesDiv.style.height = "calc(80% - " + heightInt + "px)";
 
 			var newTextareaHeight = parseInt(textarea.style.height.slice(0, -2))
+
+			// Setting a maximum height for the textarea
+			if (newTextareaHeight > 282) {
+				textarea.style.height = "282px";				
+				messagesDiv.style.height = "calc(80% - 240px)";
+			}
 
 			messagesDiv.scrollTop = messagesDiv.scrollTop - (initialTextareaHeight - newTextareaHeight);
 		}
