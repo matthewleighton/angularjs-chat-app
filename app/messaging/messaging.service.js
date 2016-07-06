@@ -122,9 +122,9 @@ function MessagingService(chatSocket) {
 		
 	}
 
-	function playMessageAlert() {
+	function playMessageAlert(username) {
 		var service = this;
-		if (!document.hasFocus() && !service.messageAlertTimeout) {
+		if (username != chatSocket.username && !document.hasFocus() && !service.messageAlertTimeout) {
 			service.messageAlertSound.play();
 			service.messageAlertTimeout = true;
 			setTimeout(function() {

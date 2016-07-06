@@ -55,7 +55,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			}
 
 			MessagingService.updateUnreadMessageCount();
-			MessagingService.playMessageAlert();
+			MessagingService.playMessageAlert(msg.user);
 
 			vm.messageStorage.push(msg);
 
@@ -231,16 +231,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		if (msg) {
 			msg = insertAnchorTags(msg);
 			$sce.trustAsHtml(msg);
-			
+				
 			chatSocket.emit('sending message', msg);
-		
+	
 			vm.msg = '';
 			document.getElementById('message-textarea').value = '';
 
 			clearUserTypingAlert(chatSocket.username);
 
 			scrollDown();
-			focusTextarea();
+			focusTextarea();	
 		}
 	}
 
