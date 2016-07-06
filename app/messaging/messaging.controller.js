@@ -26,9 +26,9 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	
 	/////////////////////
-	
-	checkLoginStatus();
 
+	checkLoginStatus(true);
+	
 	///// Listeners /////
 
 	function activateListeners() {
@@ -96,6 +96,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 
 		window.addEventListener("focus", function() {
+			checkLoginStatus();
+
 			setTimeout(function() {
 				resetTitle();
 				confirmMessageSeen(vm.messageSeenBy);
@@ -135,7 +137,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		},0);
 	}
 
-	function checkLoginStatus() {
+	/*function checkLoginStatus() {
 		var promise = MessagingService.checkLoginStatus();
 
 		promise.then(function(response) {
@@ -147,6 +149,28 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				focusTextarea();
 				getInitialCssValues();
 				activateListeners();				
+			}
+		});
+	}*/
+
+	function checkLoginStatus(initialLogin = false) {
+		console.log("Chekcing login status");
+		var promise = MessagingService.checkLoginStatus();
+
+		promise.then(function(response) {
+			//console.log("TEST?");
+			if (response && initialLogin) {
+				console.log("Initializing...");
+				focusTextarea();
+				getInitialCssValues();
+				activateListeners();
+			} else if (!response) {
+				$scope.$apply(function() {
+					console.log("Not logged in. Returning to login page");
+					$location.path('login');
+				});
+			} else {
+				console.log("Still logged in. Proceeding as normal.");
 			}
 		});
 	}
@@ -173,6 +197,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
+	}
+
+	function loginStatusConfirmed(initialLogin) {
+		if (initialLogin) {
+
+		}
 	}
 
 	function resetTitle() {
