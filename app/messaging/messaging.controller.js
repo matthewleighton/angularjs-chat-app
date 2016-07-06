@@ -9,6 +9,9 @@ MessagingController.$inject = ['chatSocket', 'MessagingService', '$scope', '$loc
 function MessagingController(chatSocket, MessagingService, $scope, $location, $sce) {
 	var vm = this;
 
+	vm.activeUsers = [];
+	vm.seenByAlert = '';
+	vm.messageSeenBy = [];
 	vm.messageStorage = [];
 	vm.msg = '';
 	vm.typingAlertTimeouts = {};
@@ -37,12 +40,13 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			vm.activeUsers = activeUsers;
 		});
 
-		chatSocket.on('send user list', function(activeUsers) {
-			vm.activeUsers = activeUsers;
-		});
-
 		chatSocket.on('new message', function(msg) {
 			clearUserTypingAlert(msg.user);
+
+			vm.messageSeenBy = [];
+			confirmMessageSeen(vm.messageSeenBy, msg.user);
+			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy);
+
 
 			var div = document.getElementById("received-messages");
 			var scrollAtBottom = false;
@@ -58,6 +62,21 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			if (scrollAtBottom) {
 				scrollDown();
 			}
+		});
+
+		chatSocket.on('send user list', function(activeUsers) {
+			vm.activeUsers = activeUsers;
+			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy);
+		});
+
+		chatSocket.on('sending messageSeenBy array', function(messageSeenBy) {
+			console.log("Received seenBy array from server");
+			console.log(messageSeenBy);
+			vm.messageSeenBy = messageSeenBy;
+			console.log(vm.messageSeenBy);
+			
+			vm.seenByAlert = updateSeenByAlert(messageSeenBy);
+			//updateSeenByAlert(messageSeenBy);
 		});
 
 		chatSocket.on('update typing array', function(username) {
@@ -92,7 +111,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 					adjustTextareaSize();
 				}, 0);
 			}
-		}	
+		}
+
+		window.addEventListener("focus", function() {
+			setTimeout(function() {
+				resetTitle();
+				console.log(".....................");
+				console.log(vm.messageSeenBy);
+				confirmMessageSeen(vm.messageSeenBy);
+			},0);
+		});
 	}
 
 	///// Functions /////
@@ -101,31 +129,69 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		MessagingService.adjustTextareaSize();
 	}
 
+	function confirmMessageSeen(seenByArray, sentBy) {
+		setTimeout(function() {
+			console.log("///////////////////////////");
+			console.log("confirming Message Seen...");
+			console.log(seenByArray);
+
+			if (!document.hasFocus()) {
+				console.log("Window is not active. RETURNING FUNCTION");
+				return;
+			}
+
+			if (!sentBy) {
+				var message = vm.messageStorage[vm.messageStorage.length-1];
+				if (!message) return;
+				sentBy = message.user;
+				if (!sentBy) return;
+			}
+
+			//console.log("Message was not sent by this user.");
+
+			var index = seenByArray.indexOf(chatSocket.username);
+			if (index > -1) {
+				console.log("Username already exists in seenBy array. RETURNING FUNCTION");
+				return;
+			}
+
+			console.log("This user does not already exist in seenBy array");
+
+			if (sentBy == chatSocket.username) {
+				console.log("Message was sent by this user. RETURNING FUNCTION");
+				return;
+			}
+
+			console.log("All is good with confirmMessageSeen function. !!! :D");
+			chatSocket.emit('message seen', chatSocket.username);
+		},0);
+
+	
+
+		/*if (sentBy != chatSocket.username && document.hasFocus()) {
+			console.log("Do we get here?");
+			chatSocket.emit('message seen', chatSocket.username);
+		}*/
+	}
+
 	function checkLoginStatus() {
 		var promise = MessagingService.checkLoginStatus();
 
 		promise.then(function(response) {
 			if (!response) {
-				console.log("You are not logged in!");
 				$scope.$apply(function() {
 					$location.path('login');
 				});
 			} else {
 				focusTextarea();
 				getInitialCssValues();
-				activateListeners();
-				
-				//TODO - Trigger this by activating window, rather than on a constantly running interval.
-				setInterval(function() {
-					resetTitle();
-				}, 2000);
+				activateListeners();				
 			}
 		});
 	}
 
 	function clearUserTypingAlert(username) {
 		var index = vm.typingArray.indexOf(username);
-		console.log(index);
 		if (index > -1) {
 			vm.typingArray.splice(index, 1);
 			updateTypingString();
@@ -165,8 +231,9 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		if (msg) {
 			msg = insertAnchorTags(msg);
 			$sce.trustAsHtml(msg);
-			chatSocket.emit('sending message', msg);
 			
+			chatSocket.emit('sending message', msg);
+		
 			vm.msg = '';
 			document.getElementById('message-textarea').value = '';
 
@@ -175,6 +242,39 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			scrollDown();
 			focusTextarea();
 		}
+	}
+
+	function updateSeenByAlert(seenByArray) {
+		var displayArray = [];
+		var seenByCurrentUser = false;
+
+		for (var i = 0; i < seenByArray.length; i++) {
+			if (seenByArray[i] != chatSocket.username) {
+				displayArray.push(seenByArray[i]);
+			} else {
+				seenByCurrentUser = true;
+			}
+		}
+		
+		if (displayArray.length < 1) return '';
+
+		if(vm.activeUsers.length > 2) {
+			var newestMessage = vm.messageStorage[vm.messageStorage.length-1];
+			
+
+			if ((newestMessage.user == chatSocket.username && displayArray.length == vm.activeUsers.length - 1) ||
+				 newestMessage.user != chatSocket.username && displayArray.length == vm.activeUsers.length - 2 && seenByCurrentUser) {
+				return "Seen by all.";
+			} 
+		}
+
+		var returnString = "Seen by " + displayArray.join(", ");
+		var lastCommaIndex = returnString.lastIndexOf(",");
+		if (lastCommaIndex > 0) {
+			returnString = returnString.substr(0, lastCommaIndex) + " and" + returnString.substr(lastCommaIndex + 1, returnString.length);	
+		}
+		
+		return returnString + ".";
 	}
 
 	function updateTypingString() {

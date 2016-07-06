@@ -124,7 +124,7 @@ function MessagingService(chatSocket) {
 
 	function playMessageAlert() {
 		var service = this;
-		if (document.hidden && !service.messageAlertTimeout) {
+		if (!document.hasFocus() && !service.messageAlertTimeout) {
 			service.messageAlertSound.play();
 			service.messageAlertTimeout = true;
 			setTimeout(function() {
@@ -134,14 +134,14 @@ function MessagingService(chatSocket) {
 	}
 
 	function resetTitle() {
-		if (!document.hidden) {
+		if (document.hasFocus()) {
 			window.document.title = "Chat App";
 			this.unreadMessageCount = 0;
 		}
 	}
 
 	function updateUnreadMessageCount() {
-		if (document.hidden) {
+		if (!document.hasFocus()) {
 			this.unreadMessageCount += 1;
 			window.document.title = "Chat App(" + this.unreadMessageCount + ")";
 		}

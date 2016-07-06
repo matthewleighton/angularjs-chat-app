@@ -3,6 +3,7 @@ var app = express();
 var server = http.createServer(app);
 
 var usersArray = [];
+var messageSeenBy = [];
 
 
 app.use("/chat", express.static(__dirname));
@@ -27,6 +28,12 @@ io.on('connect', function(socket) {
 		logout(socket);
 	});
 
+	socket.on('message seen', function(username) {
+		console.log(username + " has seen the message.");
+		messageSeenBy.push(username);
+		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
+	});
+
 	socket.on('pushUsername', function(username) {
 		socket.username = username;
 		usersArray.push(username);
@@ -45,6 +52,7 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('sending message', function(msg) {
+		messageSeenBy = [];
 		var date = createTimestamp();
 
 		io.sockets.emit('new message', {
@@ -59,7 +67,6 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('user is typing', function() {
-		console.log(socket.username + " is typing.");
 		io.sockets.emit('update typing array', socket.username);
 	});
 
@@ -91,8 +98,14 @@ io.on('connect', function(socket) {
 				usersArray.splice(index, 1);
 			}
 			console.log(usersArray);
+
+			index = messageSeenBy.indexOf(socket.username);
+			if (index > -1) {
+				messageSeenBy.splice(index, 1);
+			}
 		}
 
+		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
 		io.sockets.emit('send user list', usersArray);
 	}
 

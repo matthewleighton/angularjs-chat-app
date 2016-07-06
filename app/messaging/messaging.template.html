@@ -17,7 +17,7 @@
 			<form id="message-form">
 				<div id="alerts-and-receipts">
 					<span id="typing-alert" ng-bind="$ctrl.typingString"></span>
-					<!--<span id="read-receipts" ng-model="$ctrl.readReceipt">Seen by someone</span>--><br/>
+					<span id="seen-by-alert" ng-bind="$ctrl.seenByAlert"></span><br/>
 				</div>
 				<textarea ng-model="$ctrl.msg" placeholder="Write a message..." id="message-textarea" rows="2"></textarea>
 				<img src="assets/img/paper-plane.png" id="send-btn" ng-click="$ctrl.sendMessage($ctrl.msg)" />
