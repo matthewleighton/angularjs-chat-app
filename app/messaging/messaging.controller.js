@@ -66,11 +66,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 
 		chatSocket.on('sending messageSeenBy array', function(messageSeenBy) {
-			console.log("Received seenBy array from server");
-			console.log(messageSeenBy);
-			vm.messageSeenBy = messageSeenBy;
-			console.log(vm.messageSeenBy);
-			
+			vm.messageSeenBy = messageSeenBy;		
 			vm.seenByAlert = updateSeenByAlert(messageSeenBy);
 		});
 
@@ -111,8 +107,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		window.addEventListener("focus", function() {
 			setTimeout(function() {
 				resetTitle();
-				console.log(".....................");
-				console.log(vm.messageSeenBy);
 				confirmMessageSeen(vm.messageSeenBy);
 			},0);
 		});
@@ -193,14 +187,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	function resetTitle() {
 		MessagingService.resetTitle();
 	}
-
-	// This is triggered by a callback because it needs to happen AFTER the new message has been received from the server.
-	// A later alternative might be to use a promise to only trigger this once the new message has been received. (TODO)
+	
 	function scrollDown() {
-		chatSocket.emit('scroll down', function(callback) {
+		setTimeout(function() {
 			var objDiv = document.getElementById("received-messages");
 			objDiv.scrollTop = objDiv.scrollHeight;
-		});
+		},0);
 	}
 
 	function sendMessage(msg) {
