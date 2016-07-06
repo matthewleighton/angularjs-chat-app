@@ -32,10 +32,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	///// Listeners /////
 
 	function activateListeners() {
-		chatSocket.on('clearing user typing alert', function(username) {
-			console.log(username + " just sent a message. Now clear the alert");
-		});
-
 		chatSocket.emit('request activeUsers', function(activeUsers) {
 			vm.activeUsers = activeUsers;
 		});
@@ -76,7 +72,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			console.log(vm.messageSeenBy);
 			
 			vm.seenByAlert = updateSeenByAlert(messageSeenBy);
-			//updateSeenByAlert(messageSeenBy);
 		});
 
 		chatSocket.on('update typing array', function(username) {
@@ -131,12 +126,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	function confirmMessageSeen(seenByArray, sentBy) {
 		setTimeout(function() {
-			console.log("///////////////////////////");
-			console.log("confirming Message Seen...");
-			console.log(seenByArray);
-
 			if (!document.hasFocus()) {
-				console.log("Window is not active. RETURNING FUNCTION");
 				return;
 			}
 
@@ -147,31 +137,17 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				if (!sentBy) return;
 			}
 
-			//console.log("Message was not sent by this user.");
-
 			var index = seenByArray.indexOf(chatSocket.username);
 			if (index > -1) {
-				console.log("Username already exists in seenBy array. RETURNING FUNCTION");
 				return;
 			}
-
-			console.log("This user does not already exist in seenBy array");
 
 			if (sentBy == chatSocket.username) {
-				console.log("Message was sent by this user. RETURNING FUNCTION");
 				return;
 			}
 
-			console.log("All is good with confirmMessageSeen function. !!! :D");
 			chatSocket.emit('message seen', chatSocket.username);
 		},0);
-
-	
-
-		/*if (sentBy != chatSocket.username && document.hasFocus()) {
-			console.log("Do we get here?");
-			chatSocket.emit('message seen', chatSocket.username);
-		}*/
 	}
 
 	function checkLoginStatus() {
@@ -260,7 +236,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 		if(vm.activeUsers.length > 2) {
 			var newestMessage = vm.messageStorage[vm.messageStorage.length-1];
-			
 
 			if ((newestMessage.user == chatSocket.username && displayArray.length == vm.activeUsers.length - 1) ||
 				 newestMessage.user != chatSocket.username && displayArray.length == vm.activeUsers.length - 2 && seenByCurrentUser) {
@@ -271,7 +246,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		var returnString = "Seen by " + displayArray.join(", ");
 		var lastCommaIndex = returnString.lastIndexOf(",");
 		if (lastCommaIndex > 0) {
-			returnString = returnString.substr(0, lastCommaIndex) + " and" + returnString.substr(lastCommaIndex + 1, returnString.length);	
+			returnString = returnString.substr(0, lastCommaIndex) + " and" + returnString.substr(lastCommaIndex + 1, returnString.length);
 		}
 		
 		return returnString + ".";
