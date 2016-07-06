@@ -20,13 +20,12 @@ function MessagingService(chatSocket) {
 		listenForUsers : listenForUsers,
 		playMessageAlert : playMessageAlert,
 		resetTitle : resetTitle,
+		scrollDown : scrollDown,
 		updateUnreadMessageCount : updateUnreadMessageCount
 	}
 
 	return service;
 	////////////////////
-
-	console.log("TEST!)");
 
 	function adjustTextareaSize(msg) {
 		var textarea = document.getElementById('message-textarea');
@@ -137,6 +136,18 @@ function MessagingService(chatSocket) {
 		if (document.hasFocus()) {
 			window.document.title = "Chat App";
 			this.unreadMessageCount = 0;
+		}
+	}
+
+	function scrollDown(force = false) {
+		var messagesDiv = document.getElementById("received-messages");
+
+		if (messagesDiv.scrollTop === (messagesDiv.scrollHeight - messagesDiv.offsetHeight) || force) {
+			setTimeout(function() {
+				//var objDiv = document.getElementById("received-messages");
+				//objDiv.scrollTop = objDiv.scrollHeight;
+				messagesDiv.scrollTop = messagesDiv.scrollHeight;
+			},0);
 		}
 	}
 

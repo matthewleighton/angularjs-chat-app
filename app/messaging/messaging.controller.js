@@ -43,21 +43,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			confirmMessageSeen(vm.messageSeenBy, msg.user);
 			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy);
 
-
-			var div = document.getElementById("received-messages");
-			var scrollAtBottom = false;
-			if (div.scrollTop === (div.scrollHeight - div.offsetHeight)) {
-				scrollAtBottom = true;
-			}
-
 			MessagingService.updateUnreadMessageCount();
 			MessagingService.playMessageAlert(msg.user);
 
 			vm.messageStorage.push(msg);
 
-			if (scrollAtBottom) {
-				scrollDown();
-			}
+			scrollDown();
 		});
 
 		chatSocket.on('send user list', function(activeUsers) {
@@ -187,12 +178,9 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	function resetTitle() {
 		MessagingService.resetTitle();
 	}
-	
-	function scrollDown() {
-		setTimeout(function() {
-			var objDiv = document.getElementById("received-messages");
-			objDiv.scrollTop = objDiv.scrollHeight;
-		},0);
+
+	function scrollDown(force) {
+		MessagingService.scrollDown(force);
 	}
 
 	function sendMessage(msg) {
@@ -207,7 +195,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 			clearUserTypingAlert(chatSocket.username);
 
-			scrollDown();
+			scrollDown(true);
 			focusTextarea();	
 		}
 	}
@@ -245,8 +233,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function updateTypingString() {
-		console.log('Updating typing string');
-		
 		$scope.$apply(function() {
 			if (vm.typingArray.length == 0) {
 				vm.typingString = '';
@@ -260,7 +246,5 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				vm.typingString = 'People are typing...';
 			}
 		});
-
-		console.log(vm.typingString);
 	}
 }
