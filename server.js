@@ -78,17 +78,14 @@ io.on('connect', function(socket) {
 	});
 
 	function createTimestamp() {
-		var today = new Date();
-		var day = today.getDate();
-		var month = today.getMonth()+1;
-		var minute = today.getMinutes();
-		
-		if (minute.length == 1) {
-			minute = '0' + minute;
-		}
-		var hour = today.getHours();
+		var date = new Date();
 
-		return day + "/" + month + ", " + hour + ":" + minute;
+		var day = date.getDate();
+		var month = date.getMonth() + 1;
+		var hours = ("0" + date.getHours()).slice(-2);
+		var minutes = ("0" + date.getMinutes()).slice(-2);
+
+		return day + "/" + month + ", " + hours + ":" + minutes;
 	}
 
 	function logout(socket) {
