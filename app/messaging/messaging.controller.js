@@ -31,6 +31,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	
 	///// Listeners /////
 
+	function adjustTextareaSize() {
+		MessagingService.adjustTextareaSize();
+	}
+
 	function activateListeners() {
 		chatSocket.emit('request activeUsers', function(activeUsers) {
 			vm.activeUsers = activeUsers;
@@ -49,6 +53,18 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			vm.messageStorage.push(msg);
 
 			scrollDown();
+		});
+
+		chatSocket.on('redirect to login', function() {
+			$scope.$apply(function() {
+				console.log("Session expired.");
+				$location.path('login');
+			});
+		});
+
+		chatSocket.on('remove focus event listener', function() {
+			console.log("Removing focus event listener");
+			window.removeEventListener("focus", focusEventListener);
 		});
 
 		chatSocket.on('send user list', function(activeUsers) {
@@ -71,7 +87,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				updateTypingString();
 			}
 
-			if (vm.typingAlertTimeouts[username] > -1) {
+			if (vm.typingAlertTimeouts[username]) {
+				console.log("Clearing timeout");
 				clearTimeout(vm.typingAlertTimeouts[username]);
 			}
 			
@@ -81,6 +98,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 
 		document.onkeydown = function(e) {
+			console.log("Pressed key!");
 			if (document.activeElement.id == 'message-textarea') {
 				if (e.keyCode != 13) {
 					chatSocket.emit('user is typing');
@@ -95,22 +113,11 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			}
 		}
 
-		window.addEventListener("focus", function() {
-			checkLoginStatus();
-
-			setTimeout(function() {
-				resetTitle();
-				confirmMessageSeen(vm.messageSeenBy);
-			},0);
-		});
+		window.addEventListener("focus", focusEventListener);
 	}
 
 	///// Functions /////
 	
-	function adjustTextareaSize() {
-		MessagingService.adjustTextareaSize();
-	}
-
 	function confirmMessageSeen(seenByArray, sentBy) {
 		setTimeout(function() {
 			if (!document.hasFocus()) {
@@ -137,40 +144,19 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		},0);
 	}
 
-	/*function checkLoginStatus() {
-		var promise = MessagingService.checkLoginStatus();
-
-		promise.then(function(response) {
-			if (!response) {
-				$scope.$apply(function() {
-					$location.path('login');
-				});
-			} else {
-				focusTextarea();
-				getInitialCssValues();
-				activateListeners();				
-			}
-		});
-	}*/
-
 	function checkLoginStatus(initialLogin = false) {
 		console.log("Chekcing login status");
 		var promise = MessagingService.checkLoginStatus();
 
 		promise.then(function(response) {
-			//console.log("TEST?");
 			if (response && initialLogin) {
-				console.log("Initializing...");
 				focusTextarea();
 				getInitialCssValues();
 				activateListeners();
 			} else if (!response) {
 				$scope.$apply(function() {
-					console.log("Not logged in. Returning to login page");
 					$location.path('login');
 				});
-			} else {
-				console.log("Still logged in. Proceeding as normal.");
 			}
 		});
 	}
@@ -181,6 +167,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			vm.typingArray.splice(index, 1);
 			updateTypingString();
 		}
+	}
+
+	function focusEventListener() {
+		console.log("Triggered focus");
+		checkLoginStatus();
+
+		setTimeout(function() {
+			resetTitle();
+			confirmMessageSeen(vm.messageSeenBy);
+		},0);
 	}
 
 	function focusTextarea() {
@@ -197,12 +193,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 	function listenForUsers() {
 		return MessagingService.listenForUsers();
-	}
-
-	function loginStatusConfirmed(initialLogin) {
-		if (initialLogin) {
-
-		}
 	}
 
 	function resetTitle() {

@@ -2,8 +2,9 @@ var express = require('express'), http = require('http');
 var app = express();
 var server = http.createServer(app);
 
-var usersArray = [];
 var messageSeenBy = [];
+var usersArray = [];
+var sessionTimeouts = {};
 
 
 app.use("/chat", express.static(__dirname));
@@ -22,10 +23,14 @@ io.on('connect', function(socket) {
 		console.log("Received request to check login status");
 		console.log(socket.username);
 		callback(socket.username);
+
+		if (socket.username) {
+			updateSessionTimeout(socket.username);
+		}
 	});
 
 	socket.on('logout', function() {
-		logout(socket);
+		logout();
 	});
 
 	socket.on('message seen', function(username) {
@@ -38,6 +43,8 @@ io.on('connect', function(socket) {
 		socket.username = username;
 		usersArray.push(username);
 		console.log(usersArray);
+
+		updateSessionTimeout(username);
 
 		io.sockets.emit('send user list', usersArray);
 	});
@@ -52,6 +59,7 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('sending message', function(msg) {
+		updateSessionTimeout(socket.username);
 		messageSeenBy = [];
 		var date = createTimestamp();
 
@@ -71,11 +79,16 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('disconnect', function() {
-		logout(socket);
-
-		
+		logout();
 		console.log('User disconnected.');
 	});
+
+	function createSessionTimeout(username) {
+		return setTimeout(function() {
+			socket.emit('redirect to login');
+			logout();
+		}, 1800000);
+	}
 
 	function createTimestamp() {
 		var date = new Date();
@@ -88,7 +101,8 @@ io.on('connect', function(socket) {
 		return day + "/" + month + ", " + hours + ":" + minutes;
 	}
 
-	function logout(socket) {
+	function logout() {
+		console.log("Logging out...");
 		if (socket.username){
 			var index = usersArray.indexOf(socket.username);
 			if (index > -1) {
@@ -96,15 +110,28 @@ io.on('connect', function(socket) {
 			}
 			console.log(usersArray);
 
+			if (sessionTimeouts[socket.username]) {
+				clearTimeout(sessionTimeouts[socket.username]);
+				delete sessionTimeouts[socket.username];
+			}
+
 			index = messageSeenBy.indexOf(socket.username);
 			if (index > -1) {
 				messageSeenBy.splice(index, 1);
 			}
 		}
 
+		socket.emit('remove focus event listener');
 		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
 		io.sockets.emit('send user list', usersArray);
 	}
 
+	function updateSessionTimeout(username) {
+		console.log("Updating session timeout for " + username);
+		if (sessionTimeouts[username]) {
+			clearTimeout(sessionTimeouts[username]);
+		}
+		sessionTimeouts[username] = createSessionTimeout(username);
+	}
 	
 });
