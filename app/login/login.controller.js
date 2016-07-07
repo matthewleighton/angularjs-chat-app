@@ -13,15 +13,9 @@ function LoginController(LoginService, MessagingService, chatSocket, $location, 
 	vm.logout = logout;
 	vm.error = '';
 
-
-	logout();
-	// Timeout needed in order to allow final emits to be received from server before we stop listening for them.
-	
-	/*setTimeout(function() {
-		chatSocket.removeAllListeners();
-		document.onkeydown = null;
-	}, 0);*/
-	
+	if (chatSocket.username) {
+		logout();
+	}
 	
 	/////////////////////
 

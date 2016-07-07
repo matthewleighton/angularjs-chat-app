@@ -70,19 +70,20 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			});
 		});
 
-		chatSocket.on('remove focus event listener', function() {
+		chatSocket.on('remove listeners', function() {
 			console.log("Removing focus event listener");
 			window.removeEventListener("focus", focusEventListener);
 			chatSocket.removeAllListeners();
 			document.onkeydown = null;
 			delete chatSocket.username;
 
-			// Unclear whether this is working.
-			/*if (window.location.href.splice(-2) != "login") {
+			var page = window.location.href.slice(-5);
+			if(page != "login") {
+				console.log("Forcing redirect to login page");
 				$scope.$apply(function() {
 					$location.path('login');
 				});
-			}*/
+			}
 		});
 
 		chatSocket.on('send user list', function(activeUsers) {
@@ -181,6 +182,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 				$scope.$apply(function() {
 					$location.path('login');
 				});
+			} else {
+				return true;
 			}
 		});
 	}
@@ -228,6 +231,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function sendMessage(msg) {
+		checkLoginStatus();
+
 		if (msg) {
 			msg = insertAnchorTags(msg);
 			$sce.trustAsHtml(msg);

@@ -150,8 +150,6 @@ function MessagingService(chatSocket) {
 
 		if (messagesDiv.scrollTop === (messagesDiv.scrollHeight - messagesDiv.offsetHeight) || force) {
 			setTimeout(function() {
-				//var objDiv = document.getElementById("received-messages");
-				//objDiv.scrollTop = objDiv.scrollHeight;
 				messagesDiv.scrollTop = messagesDiv.scrollHeight;
 			},0);
 		}

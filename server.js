@@ -40,8 +40,7 @@ io.on('connect', function(socket) {
 			console.log(username + " has seen the message.");
 			messageSeenBy.push(username);
 			io.sockets.emit('sending messageSeenBy array', messageSeenBy);
-		}
-		
+		}		
 	});
 
 	socket.on('pushUsername', function(username) {
@@ -149,7 +148,7 @@ io.on('connect', function(socket) {
 		}
 
 		
-		socket.emit('remove focus event listener');
+		socket.emit('remove listeners');
 		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
 		io.sockets.emit('send user list', usersArray);
 	}
