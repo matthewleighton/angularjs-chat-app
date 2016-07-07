@@ -47,7 +47,9 @@ function LoginService(chatSocket) {
 	}
 
 	function logout() {
+		console.log("Logging out...");
 		chatSocket.emit('logout');
+		//delete chatSocket.username;
 	}
 
 	function pushUsername(username) {

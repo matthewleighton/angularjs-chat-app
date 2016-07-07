@@ -34,9 +34,14 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('message seen', function(username) {
-		console.log(username + " has seen the message.");
-		messageSeenBy.push(username);
-		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
+		var seenByIndex = messageSeenBy.indexOf(username);
+		var usersArrayIndex = usersArray.indexOf(username);
+		if (seenByIndex < 0 && usersArrayIndex > -1) {
+			console.log(username + " has seen the message.");
+			messageSeenBy.push(username);
+			io.sockets.emit('sending messageSeenBy array', messageSeenBy);
+		}
+		
 	});
 
 	socket.on('pushUsername', function(username) {
@@ -60,6 +65,10 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('sending message', function(msg) {
+		if (!userExists(socket.username)) {
+			return;
+		}
+
 		updateSessionTimeout(socket.username);
 		messageSeenBy = [];
 		var date = createTimestamp();
@@ -78,12 +87,17 @@ io.on('connect', function(socket) {
 	});
 
 	socket.on('user is typing', function() {
-		io.sockets.emit('update typing array', socket.username);
+		var index = usersArray.indexOf(socket.username);
+		if (index > -1) {
+			io.sockets.emit('update typing array', socket.username);	
+		}
+		
 	});
 
 	socket.on('disconnect', function() {
+		console.log(socket.username + ' disconnected.');
 		logout();
-		console.log('User disconnected.');
+		
 	});
 
 	function announceUser(username, loggingIn) {
@@ -129,9 +143,12 @@ io.on('connect', function(socket) {
 			if (index > -1) {
 				messageSeenBy.splice(index, 1);
 			}
+
+			announceUser(socket.username, false);
+			delete socket.username;
 		}
 
-		announceUser(socket.username, false);
+		
 		socket.emit('remove focus event listener');
 		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
 		io.sockets.emit('send user list', usersArray);
@@ -147,6 +164,11 @@ io.on('connect', function(socket) {
 			clearTimeout(sessionTimeouts[username]);
 		}
 		sessionTimeouts[username] = createSessionTimeout(username);
+	}
+
+	function userExists(username) {
+		var index = usersArray.indexOf(username);
+		return (index > -1) ? true : false;
 	}
 	
 });

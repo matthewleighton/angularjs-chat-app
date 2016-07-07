@@ -44,6 +44,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			var index = vm.activeUsers.indexOf(username);
 			if (index > -1 && username != chatSocket.username) {
 				vm.messageStorage.push({userAnnouncement: announcement});
+				scrollDown();
 			}
 		});
 
@@ -72,6 +73,16 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		chatSocket.on('remove focus event listener', function() {
 			console.log("Removing focus event listener");
 			window.removeEventListener("focus", focusEventListener);
+			chatSocket.removeAllListeners();
+			document.onkeydown = null;
+			delete chatSocket.username;
+
+			// Unclear whether this is working.
+			/*if (window.location.href.splice(-2) != "login") {
+				$scope.$apply(function() {
+					$location.path('login');
+				});
+			}*/
 		});
 
 		chatSocket.on('send user list', function(activeUsers) {
@@ -95,13 +106,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			}
 
 			if (vm.typingAlertTimeouts[username]) {
-				console.log("Clearing timeout");
 				clearTimeout(vm.typingAlertTimeouts[username]);
 			}
 			
 			vm.typingAlertTimeouts[username] = 	setTimeout(function() {
 				clearUserTypingAlert(username);
-			}, 2000);
+			}, 3000);
 		});
 
 		document.onkeydown = function(e) {
@@ -120,13 +130,21 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 
 		window.addEventListener("focus", focusEventListener);
+
+		/*document.watch('hidden', function() {
+			console.log("Triggered hidden status listener");
+		});*/
+		
+		/*document.addEventListener("visibilitychange", function() {
+			console.log(document.visibilityState);
+		});*/
 	}
 
 	///// Functions /////
 	
 	function confirmMessageSeen(seenByArray, sentBy) {
 		setTimeout(function() {
-			if (!document.hasFocus()) {
+			if (!document.hasFocus() || document.hidden) {
 				return;
 			}
 
@@ -151,7 +169,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function checkLoginStatus(initialLogin = false) {
-		console.log("Chekcing login status");
+		console.log("Checking login status");
 		var promise = MessagingService.checkLoginStatus();
 
 		promise.then(function(response) {

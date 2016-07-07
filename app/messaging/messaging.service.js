@@ -123,6 +123,12 @@ function MessagingService(chatSocket) {
 
 	function playMessageAlert(username) {
 		var service = this;
+		console.log("Trying to play alert sound.");
+
+		if (!document.hasFocus()) {
+			console.log("Document does not have focus");
+		}
+
 		if (username != chatSocket.username && !document.hasFocus() && !service.messageAlertTimeout) {
 			service.messageAlertSound.play();
 			service.messageAlertTimeout = true;

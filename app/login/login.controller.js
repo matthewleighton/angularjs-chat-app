@@ -16,10 +16,11 @@ function LoginController(LoginService, MessagingService, chatSocket, $location, 
 
 	logout();
 	// Timeout needed in order to allow final emits to be received from server before we stop listening for them.
-	setTimeout(function() {
+	
+	/*setTimeout(function() {
 		chatSocket.removeAllListeners();
 		document.onkeydown = null;
-	}, 0);
+	}, 0);*/
 	
 	
 	/////////////////////
