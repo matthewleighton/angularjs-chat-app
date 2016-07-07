@@ -47,6 +47,7 @@ io.on('connect', function(socket) {
 		updateSessionTimeout(username);
 
 		io.sockets.emit('send user list', usersArray);
+		announceUser(username, true);
 	});
 
 	socket.on('request activeUsers', function(callback) {
@@ -63,11 +64,13 @@ io.on('connect', function(socket) {
 		messageSeenBy = [];
 		var date = createTimestamp();
 
-		io.sockets.emit('new message', {
+		var messageObject = {
 			'user' : socket.username,
 			'body' : msg,
 			'timestamp' : date
-		});
+		}
+
+		sendMessage(messageObject);
 	});
 
 	socket.on('scroll down', function(callback) {
@@ -82,6 +85,13 @@ io.on('connect', function(socket) {
 		logout();
 		console.log('User disconnected.');
 	});
+
+	function announceUser(username, loggingIn) {
+		var verb = loggingIn ? "joined" : "left";
+		var announcement = username + " has " + verb + " the chat.";
+
+		io.sockets.emit('announce user', announcement, username);
+	}
 
 	function createSessionTimeout(username) {
 		return setTimeout(function() {
@@ -121,9 +131,14 @@ io.on('connect', function(socket) {
 			}
 		}
 
+		announceUser(socket.username, false);
 		socket.emit('remove focus event listener');
 		io.sockets.emit('sending messageSeenBy array', messageSeenBy);
 		io.sockets.emit('send user list', usersArray);
+	}
+
+	function sendMessage(msg) {
+		io.sockets.emit('new message', msg);
 	}
 
 	function updateSessionTimeout(username) {

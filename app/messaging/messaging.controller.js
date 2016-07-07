@@ -40,6 +40,13 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			vm.activeUsers = activeUsers;
 		});
 
+		chatSocket.on('announce user', function(announcement, username) {
+			var index = vm.activeUsers.indexOf(username);
+			if (index > -1 && username != chatSocket.username) {
+				vm.messageStorage.push({userAnnouncement: announcement});
+			}
+		});
+
 		chatSocket.on('new message', function(msg) {
 			clearUserTypingAlert(msg.user);
 
@@ -98,7 +105,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		});
 
 		document.onkeydown = function(e) {
-			console.log("Pressed key!");
 			if (document.activeElement.id == 'message-textarea') {
 				if (e.keyCode != 13) {
 					chatSocket.emit('user is typing');

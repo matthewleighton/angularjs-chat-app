@@ -1,5 +1,6 @@
 @loginBackground: #8BB6EC;
 @messageAreaWidth: 509px;
+@announcements: #696969;
 
 ::-webkit-scrollbar {
     width: 7px;
@@ -121,7 +122,6 @@ login {
 }
 
 #received-messages {
-	/*background-color: white;*/
 	box-sizing: border-box;
 	font-size: 13px;
 	
@@ -159,6 +159,12 @@ login {
 	#message-container {
 		width: 300px;
 	}
+}
+
+.user-announcement {
+	color: @announcements;
+	font-size: 11px;
+	font-style: italic;
 }
 
 .sent-by {
@@ -217,7 +223,7 @@ login {
 }
 
 #alerts-and-receipts {
-	color: #696969;
+	color: @announcements;
 	font-size: 10px;
 	margin-bottom: 4px;
 }

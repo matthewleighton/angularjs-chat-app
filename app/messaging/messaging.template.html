@@ -9,8 +9,13 @@
 	<div id="messaging-area">
 		<div id="received-messages">
 			<div ng-repeat="msg in $ctrl.messageStorage" id="message-container">
-				<span class="sent-by" ng-bind="msg.user"></span> <span class="timestamp" ng-bind="msg.timestamp"></span><br/>
-				<span class="message-body" ng-bind-html="msg.body"></span><br/><br/>
+				<div ng-if="msg.userAnnouncement!=undefined">
+					<span class="user-announcement" ng-bind="msg.userAnnouncement" ng-if="msg.userAnnouncement"></span><br/><br/>
+				</div>
+				<div ng-if="msg.userAnnouncement==undefined">
+					<span class="sent-by" ng-bind="msg.user"></span><span class="timestamp" ng-bind="msg.timestamp"></span><br/>
+					<span class="message-body" ng-bind-html="msg.body"></span><br/><br/>
+				</div>
 			</div>
 		</div>
 		<div id="message-entry">
