@@ -103,7 +103,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 			if (vm.typingArray.indexOf(username) < 0) {
 				vm.typingArray.push(username);
-				updateTypingString();
+				updateTypingString(vm.typingArray);
 			}
 
 			if (vm.typingAlertTimeouts[username]) {
@@ -170,7 +170,6 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function checkLoginStatus(initialLogin = false) {
-		console.log("Checking login status");
 		var promise = MessagingService.checkLoginStatus();
 
 		promise.then(function(response) {
@@ -192,12 +191,11 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		var index = vm.typingArray.indexOf(username);
 		if (index > -1) {
 			vm.typingArray.splice(index, 1);
-			updateTypingString();
+			updateTypingString(vm.typingArray);
 		}
 	}
 
 	function focusEventListener() {
-		console.log("Triggered focus");
 		checkLoginStatus();
 
 		setTimeout(function() {
@@ -254,6 +252,13 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		return MessagingService.updateSeenByAlert(seenByArray, activeUsers, messageStorage);
 	}
 
+	function updateTypingString(typingArray) {
+		console.log(typingArray);
+		$scope.$apply(function() {
+			vm.typingString = MessagingService.updateTypingString(typingArray);
+		});
+	}
+/*
 	function updateTypingString() {
 		$scope.$apply(function() {
 			if (vm.typingArray.length == 0) {
@@ -269,4 +274,5 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 			}
 		});
 	}
+*/
 }

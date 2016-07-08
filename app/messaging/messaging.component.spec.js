@@ -97,8 +97,6 @@ describe('login module', function() {
 		describe('updateSeenByAlert function', function() {
 			var seenByArray, activeUsers, messageStorage, chatSocket;
 
-			var i;
-
 			beforeEach(inject(function(_chatSocket_) {
 				chatSocket = _chatSocket_;
 				chatSocket.username = 'One';
@@ -244,8 +242,40 @@ describe('login module', function() {
 
 				expect(MessagingService.updateSeenByAlert(seenByArray, activeUsers, messageStorage)).toEqual('');
 			});
+		});
 
+		describe("updateTypingString function", function() {
+			var typingArray;
 
+			it("should return an empty string when the typingArray is empty", function() {
+				typingArray = [];
+
+				expect(MessagingService.updateTypingString(typingArray)).toEqual('');
+			});
+
+			it("should return 'Name is typing...' if the typingArray contains one user", function() {
+				typingArray = ['One'];
+
+				expect(MessagingService.updateTypingString(typingArray)).toEqual('One is typing...');
+			});
+
+			it("should return 'Name and Name are typing...' if the typingArray contains two users", function() {
+				typingArray = ['One', 'Two'];
+
+				expect(MessagingService.updateTypingString(typingArray)).toEqual('One and Two are typing...');
+			});
+
+			it("should return 'Name, Name and Name are typing...' if the typingArray contains one user", function() {
+				typingArray = ['One', 'Two', 'Three'];
+
+				expect(MessagingService.updateTypingString(typingArray)).toEqual('One, Two and Three are typing...');
+			});
+
+			it("should return 'x users are typing...' if the typingArray contains more than 3 users", function() {
+				typingArray = ['One', 'Two', 'Three', 'Four'];
+
+				expect(MessagingService.updateTypingString(typingArray)).toEqual('4 users are typing...');
+			});
 		});
 
 		

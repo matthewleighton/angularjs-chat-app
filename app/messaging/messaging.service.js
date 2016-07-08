@@ -22,6 +22,7 @@ function MessagingService(chatSocket) {
 		resetTitle : resetTitle,
 		scrollDown : scrollDown,
 		updateSeenByAlert : updateSeenByAlert,
+		updateTypingString : updateTypingString,
 		updateUnreadMessageCount : updateUnreadMessageCount
 	}
 
@@ -194,6 +195,20 @@ function MessagingService(chatSocket) {
 		}
 		
 		return returnString + ".";
+	}
+
+	function updateTypingString(typingArray) {
+		if (typingArray.length == 0) {
+			return '';
+		} else if (typingArray.length == 1) {
+			return typingArray[0] + " is typing...";
+		} else if (typingArray.length > 1 && typingArray.length < 4) {
+			var string = typingArray.join(", ") + " are typing...";
+			var lastCommaIndex = string.lastIndexOf(",");
+			return string.substr(0, lastCommaIndex) + " and" + string.substr(lastCommaIndex + 1, string.length);
+		} else {
+			return typingArray.length + ' users are typing...';
+		}
 	}
 
 	function updateUnreadMessageCount() {
