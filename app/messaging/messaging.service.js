@@ -21,6 +21,7 @@ function MessagingService(chatSocket) {
 		playMessageAlert : playMessageAlert,
 		resetTitle : resetTitle,
 		scrollDown : scrollDown,
+		updateSeenByAlert : updateSeenByAlert,
 		updateUnreadMessageCount : updateUnreadMessageCount
 	}
 
@@ -153,6 +154,46 @@ function MessagingService(chatSocket) {
 				messagesDiv.scrollTop = messagesDiv.scrollHeight;
 			},0);
 		}
+	}
+
+	function updateSeenByAlert(seenByArray, activeUsers, messageStorage) {
+		if (messageStorage.length < 1) return '';
+
+		var senderUsername = messageStorage[messageStorage.length-1].user;
+		var senderIndex = seenByArray.indexOf(senderUsername);
+		if (senderIndex > -1) {
+			seenByArray.splice(senderIndex);
+		}
+
+		var displayArray = [];
+		var seenByCurrentUser = false;
+
+		for (var i = 0; i < seenByArray.length; i++) {
+			if (seenByArray[i] != chatSocket.username) {
+				displayArray.push(seenByArray[i]);
+			} else {
+				seenByCurrentUser = true;
+			}
+		}
+		
+		if (displayArray.length < 1) return '';
+
+		if(activeUsers.length > 2) {
+			if ((senderUsername == chatSocket.username && displayArray.length == activeUsers.length - 1) ||
+				 senderUsername != chatSocket.username && displayArray.length == activeUsers.length - 2 && seenByCurrentUser) {
+				return "Seen by all.";
+			} else if (displayArray.length > 4) {
+				return "Seen by " + displayArray.length + " users.";
+			}
+		}
+
+		var returnString = "Seen by " + displayArray.join(", ");
+		var lastCommaIndex = returnString.lastIndexOf(",");
+		if (lastCommaIndex > 0) {
+			returnString = returnString.substr(0, lastCommaIndex) + " and" + returnString.substr(lastCommaIndex + 1, returnString.length);
+		}
+		
+		return returnString + ".";
 	}
 
 	function updateUnreadMessageCount() {

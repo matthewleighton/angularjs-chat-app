@@ -53,7 +53,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 			vm.messageSeenBy = [];
 			confirmMessageSeen(vm.messageSeenBy, msg.user);
-			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy);
+			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy, vm.activeUsers, vm.messageStorage);
 
 			MessagingService.updateUnreadMessageCount();
 			MessagingService.playMessageAlert(msg.user);
@@ -88,12 +88,12 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 
 		chatSocket.on('send user list', function(activeUsers) {
 			vm.activeUsers = activeUsers;
-			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy);
+			vm.seenByAlert = updateSeenByAlert(vm.messageSeenBy, vm.activeUsers, vm.messageStorage);
 		});
 
 		chatSocket.on('sending messageSeenBy array', function(messageSeenBy) {
 			vm.messageSeenBy = messageSeenBy;		
-			vm.seenByAlert = updateSeenByAlert(messageSeenBy);
+			vm.seenByAlert = updateSeenByAlert(messageSeenBy, vm.activeUsers, vm.messageStorage);
 		});
 
 		chatSocket.on('update typing array', function(username) {
@@ -231,6 +231,7 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 	}
 
 	function sendMessage(msg) {
+		// This is here as a tempory solution until I find a way to trigger a function by the browser app being reopened on tablet/mobile. TODO
 		checkLoginStatus();
 
 		if (msg) {
@@ -249,36 +250,8 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 	}
 
-	function updateSeenByAlert(seenByArray) {
-		var displayArray = [];
-		var seenByCurrentUser = false;
-
-		for (var i = 0; i < seenByArray.length; i++) {
-			if (seenByArray[i] != chatSocket.username) {
-				displayArray.push(seenByArray[i]);
-			} else {
-				seenByCurrentUser = true;
-			}
-		}
-		
-		if (displayArray.length < 1) return '';
-
-		if(vm.activeUsers.length > 2) {
-			var newestMessage = vm.messageStorage[vm.messageStorage.length-1];
-
-			if ((newestMessage.user == chatSocket.username && displayArray.length == vm.activeUsers.length - 1) ||
-				 newestMessage.user != chatSocket.username && displayArray.length == vm.activeUsers.length - 2 && seenByCurrentUser) {
-				return "Seen by all.";
-			} 
-		}
-
-		var returnString = "Seen by " + displayArray.join(", ");
-		var lastCommaIndex = returnString.lastIndexOf(",");
-		if (lastCommaIndex > 0) {
-			returnString = returnString.substr(0, lastCommaIndex) + " and" + returnString.substr(lastCommaIndex + 1, returnString.length);
-		}
-		
-		return returnString + ".";
+	function updateSeenByAlert(seenByArray, activeUsers, messageStorage) {
+		return MessagingService.updateSeenByAlert(seenByArray, activeUsers, messageStorage);
 	}
 
 	function updateTypingString() {
