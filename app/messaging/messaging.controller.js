@@ -131,18 +131,10 @@ function MessagingController(chatSocket, MessagingService, $scope, $location, $s
 		}
 
 		window.addEventListener("focus", focusEventListener);
-
-		/*document.watch('hidden', function() {
-			console.log("Triggered hidden status listener");
-		});*/
-		
-		/*document.addEventListener("visibilitychange", function() {
-			console.log(document.visibilityState);
-		});*/
 	}
 
 	///// Functions /////
-	
+
 	function confirmMessageSeen(seenByArray, sentBy) {
 		setTimeout(function() {
 			if (!document.hasFocus() || document.hidden) {
